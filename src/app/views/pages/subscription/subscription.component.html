@@ -1,0 +1,99 @@
+<div class="subscription-container">
+    <h2>Create Subscription</h2>
+    <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()">
+      <!-- Name -->
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          formControlName="name"
+          placeholder="Enter subscription name"
+        />
+        <div *ngIf="subscriptionForm.get('name')?.invalid && subscriptionForm.get('name')?.touched" class="text-danger">
+          Name is required.
+        </div>
+      </div>
+  
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          class="form-control"
+          formControlName="description"
+          placeholder="Enter subscription description"
+        ></textarea>
+      </div>
+  
+      <!-- Amount -->
+      <div class="form-group">
+        <label for="amount">Amount</label>
+        <input
+          type="number"
+          id="amount"
+          class="form-control"
+          formControlName="amount"
+          placeholder="Enter subscription amount"
+        />
+        <div *ngIf="subscriptionForm.get('amount')?.invalid && subscriptionForm.get('amount')?.touched" class="text-danger">
+          Amount is required and must be non-negative.
+        </div>
+      </div>
+  
+      <!-- Duration -->
+      <div class="form-group">
+        <label for="duration">Duration</label>
+        <input
+          type="text"
+          id="duration"
+          class="form-control"
+          formControlName="duration"
+          placeholder="Enter subscription duration"
+        />
+        <div *ngIf="subscriptionForm.get('duration')?.invalid && subscriptionForm.get('duration')?.touched" class="text-danger">
+          Duration is required.
+        </div>
+      </div>
+  
+      <!-- Type -->
+      <div class="form-group">
+        <label for="type">Type</label>
+        <select
+          id="type"
+          class="form-control"
+          formControlName="type"
+        >
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+  
+      <!-- Features -->
+      <div class="form-group">
+        <label for="features">Features</label>
+        <textarea
+          id="features"
+          class="form-control"
+          formControlName="features"
+          placeholder="Enter subscription features"
+        ></textarea>
+      </div>
+  
+      <!-- Image Upload -->
+      <div class="form-group">
+        <label for="image">Subscription Image</label>
+        <input
+          type="file"
+          id="image"
+          class="form-control"
+          (change)="onFileSelected($event)"
+          accept="image/*"
+        />
+      </div>
+  
+      <!-- Submit Button -->
+      <button type="submit" [disabled]="subscriptionForm.invalid">Create Subscription</button>
+    </form>
+  </div>

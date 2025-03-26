@@ -1,0 +1,66 @@
+.container {
+  max-width: 1200px;
+}
+
+.card {
+  border-radius: 10px;
+}
+
+.card-header {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.table th {
+  font-weight: 600;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.dropdown-item {
+  cursor: pointer;
+}
+
+.pagination {
+  margin-bottom: 0;
+}
+
+.page-link {
+  cursor: pointer;
+}
+
+.badge {
+  font-size: 0.8rem;
+}
+
+/* Fix for modal backdrop issues */
+.modal-backdrop {
+  z-index: 1040;
+}
+
+.modal {
+  z-index: 1050;
+}
+
+/* Make table rows hover-friendly */
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Better spacing for small screens */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem 0.5rem;
+  }
+  
+  .table {
+    font-size: 0.9rem;
+  }
+  
+  .pagination .page-link {
+    padding: 0.25rem 0.5rem;
+  }
+}

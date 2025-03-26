@@ -1,0 +1,17 @@
+.container {
+  max-width: 600px;
+}
+
+.card {
+  border-radius: 10px;
+}
+
+.card-header {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+button:disabled {
+  opacity: 0.6;
+}

@@ -1,12 +1,12 @@
 export interface PaginationModel {
   docs: any[];
-  totalDocs: string;
-  limit: string;
-  totalPages: string;
-  page: string;
-  pagingCounter: string;
+  totalDocs: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  pagingCounter: number;
   hasPrevPage: boolean;
   hasNextPage: boolean;
-  prevPage: any;
-  nextPage: any;
+  prevPage: number | null;
+  nextPage: number | null;
 }

@@ -4,10 +4,13 @@ import { HomeLayoutComponent } from './views/partials/home-layout/home-layout.co
 import { DashboardComponent } from './views/pages/dashboard/dashboard.component';
 
 import { UsersComponent } from './views/pages/users/users.component';
+import { BannerComponent } from './views/pages/banner/banner.component';
+import { CouponComponent } from './views/pages/coupon/coupon.component';
+import { SubscriptionComponent } from './views/pages/subscription/subscription.component';
 
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'auth/login' },
+  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   { path: 'auth/login', component: SignInComponent },
   {
     path: '',
@@ -15,7 +18,14 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
     
-      { path: 'users', component: UsersComponent }
+      { path: 'users', component: UsersComponent },
+      {path:'banner', component: BannerComponent },
+      { path: 'coupon', component: CouponComponent },
+      { path: 'subscription', component: SubscriptionComponent },
+
+      
+
+      
     ],
   },
 ];

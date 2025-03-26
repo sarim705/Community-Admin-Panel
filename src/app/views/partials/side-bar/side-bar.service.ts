@@ -12,20 +12,28 @@ export class SideBarService {
       moduleName: 'Member',
       menus: [
         {
-          title: 'Dashboard',
-          link: 'dashboard',
-          icon: 'monitor',
-        },
-        {
           title: 'Users',
           link: 'users',
           icon: 'user',
         },
+        { title: 'Banner',
+          link: 'banner',
+          icon: 'monitor'
+          ,
+        },
         {
-          title: 'Create Card',
-          link: 'create-card',
+          title: 'CreateCoupons',
+          link: 'coupon',
           icon: 'credit-card',
         },
+        {
+          title: 'Subscription',
+          link: 'subscription',
+          icon: 'credit-card',
+        }
+
+        
+        
       ],
     },
     
