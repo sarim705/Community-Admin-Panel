@@ -1,50 +1,53 @@
-6<nav id="sidebar" class="sidebar js-sidebar">
-  <div class="sidebar-content js-simplebar" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-    <a class="sidebar-brand" style="color:#126f8a; background: aliceblue; padding: 10px 20px;" [routerLink]="'business-cards'">
-      <span class="align-middle">
-        <div class="text-truncate">Startup Weaver</div>
-        <!-- <div style="font-size: 12px;">Admin Panel</div> -->
-      </span>
+<!-- Sidebar Toggle Button for Mobile -->
+<button class="btn btn-primary d-lg-none" type="button" (click)="toggleSidebar()">
+  ☰ Menu
+</button>
+
+<!-- Sidebar -->
+<nav id="sidebar" class="sidebar js-sidebar" [class.active]="isSidebarOpen">
+  <div class="sidebar-content js-simplebar">
+    <!-- Brand Logo -->
+    <a class="sidebar-brand text-truncate" [routerLink]="'business-cards'">
+      <div class="p-3 text-center" style="background: aliceblue; color: #126f8a;">
+        <h5 class="mb-0">Startup Weaver</h5>
+      </div>
     </a>
 
-    <div class="vh-100" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 50%;">
-      <ul class="sidebar-nav">
-        <span *ngFor="let module of sideBarService.list">
-          <li class="sidebar-header">{{module.moduleName}}</li>
-          <li class="sidebar-item" *ngFor="let item of module.menus; let i = index" [routerLinkActive]="'active'">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-nav vh-100 overflow-auto">
+      <ul class="list-unstyled">
+        <ng-container *ngFor="let module of sideBarService.list">
+          <li class="sidebar-header">{{ module.moduleName }}</li>
+          <li class="sidebar-item" *ngFor="let item of module.menus; let i = index">
             <ng-container *ngIf="!item.menu">
-              <a class="sidebar-link user-select-none" [routerLink]="item.link"
-                [queryParams]="item.query ? item.query : {}">
+              <a class="sidebar-link user-select-none" [routerLink]="item.link" [queryParams]="item.query || {}">
                 <i class="align-middle" [attr.data-feather]="item?.icon"></i>
                 <span class="align-middle">{{ item.title }}</span>
               </a>
             </ng-container>
-            
             <ng-container *ngIf="item.menu">
               <a class="sidebar-link user-select-none" (click)="sideBarService.toggleSubMenu(i)">
                 <i class="align-middle" [attr.data-feather]="item?.icon"></i>
                 <span class="align-middle">{{ item.title }}</span>
                 <i class="ri-arrow-down-s-fill" [class.rotate-icon]="sideBarService.activeSubMenuIndex === i"></i>
               </a>
-              <ul class="sub-menu" *ngIf="sideBarService.activeSubMenuIndex === i">
+              <ul class="sub-menu ps-4" *ngIf="sideBarService.activeSubMenuIndex === i">
                 <li class="sidebar-item" *ngFor="let submenu of item.menu">
-                  <a class="sidebar-link user-select-none"
-                    style="padding-top: 5px; padding-bottom: 5px; font-size: 13px;"
-                    (click)="sideBarService.onNavSwitch(submenu.link)">
-                    <i class="align-middle"></i>
-                    <span class="align-middle"><i class="ri-arrow-right-line"></i>{{ submenu.title }}</span>
+                  <a class="sidebar-link user-select-none" (click)="sideBarService.onNavSwitch(submenu.link)">
+                    <i class="ri-arrow-right-line me-1"></i>{{ submenu.title }}
                   </a>
                 </li>
               </ul>
             </ng-container>
           </li>
-        </span>
+        </ng-container>
 
-
+        <!-- Extra Section -->
         <li class="sidebar-header">Extra & Tools</li>
         <li class="sidebar-item">
           <a class="sidebar-link user-select-none" (click)="logout()">
-            <i class="align-middle" data-feather="log-out"></i> <span class="align-middle">Logout</span>
+            <i class="align-middle" data-feather="log-out"></i>
+            <span class="align-middle">Logout</span>
           </a>
         </li>
       </ul>

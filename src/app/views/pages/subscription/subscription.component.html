@@ -1,99 +1,134 @@
-<div class="subscription-container">
-    <h2>Create Subscription</h2>
-    <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()">
-      <!-- Name -->
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input
-          type="text"
-          id="name"
-          class="form-control"
-          formControlName="name"
-          placeholder="Enter subscription name"
-        />
-        <div *ngIf="subscriptionForm.get('name')?.invalid && subscriptionForm.get('name')?.touched" class="text-danger">
-          Name is required.
+<div class="container">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Create Subscription</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Name -->
+          <div class="col-md-6 mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              formControlName="name"
+              placeholder="Enter subscription name"
+              [ngClass]="{ 'is-invalid': isFieldInvalid('name') }"
+            />
+            <div *ngIf="isFieldInvalid('name')" class="invalid-feedback">
+              {{ getErrorMessage('name') }}
+            </div>
+          </div>
+
+          <!-- Amount -->
+          <div class="col-md-6 mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input
+              type="number"
+              id="amount"
+              class="form-control"
+              formControlName="amount"
+              placeholder="Enter subscription amount"
+              [ngClass]="{ 'is-invalid': isFieldInvalid('amount') }"
+            />
+            <div *ngIf="isFieldInvalid('amount')" class="invalid-feedback">
+              {{ getErrorMessage('amount') }}
+            </div>
+          </div>
         </div>
-      </div>
-  
-      <!-- Description -->
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea
-          id="description"
-          class="form-control"
-          formControlName="description"
-          placeholder="Enter subscription description"
-        ></textarea>
-      </div>
-  
-      <!-- Amount -->
-      <div class="form-group">
-        <label for="amount">Amount</label>
-        <input
-          type="number"
-          id="amount"
-          class="form-control"
-          formControlName="amount"
-          placeholder="Enter subscription amount"
-        />
-        <div *ngIf="subscriptionForm.get('amount')?.invalid && subscriptionForm.get('amount')?.touched" class="text-danger">
-          Amount is required and must be non-negative.
+
+        <!-- Description -->
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            id="description"
+            class="form-control"
+            formControlName="description"
+            placeholder="Enter subscription description"
+            rows="3"
+            [ngClass]="{ 'is-invalid': isFieldInvalid('description') }"
+          ></textarea>
+          <div *ngIf="isFieldInvalid('description')" class="invalid-feedback">
+            {{ getErrorMessage('description') }}
+          </div>
         </div>
-      </div>
-  
-      <!-- Duration -->
-      <div class="form-group">
-        <label for="duration">Duration</label>
-        <input
-          type="text"
-          id="duration"
-          class="form-control"
-          formControlName="duration"
-          placeholder="Enter subscription duration"
-        />
-        <div *ngIf="subscriptionForm.get('duration')?.invalid && subscriptionForm.get('duration')?.touched" class="text-danger">
-          Duration is required.
+
+        <div class="row">
+          <!-- Duration -->
+          <div class="col-md-6 mb-3">
+            <label for="duration" class="form-label">Duration</label>
+            <input
+              type="text"
+              id="duration"
+              class="form-control"
+              formControlName="duration"
+              placeholder="Enter subscription duration"
+              [ngClass]="{ 'is-invalid': isFieldInvalid('duration') }"
+            />
+            <div *ngIf="isFieldInvalid('duration')" class="invalid-feedback">
+              {{ getErrorMessage('duration') }}
+            </div>
+          </div>
+
+          <!-- Type -->
+          <div class="col-md-6 mb-3">
+            <label for="type" class="form-label">Type</label>
+            <select 
+              id="type" 
+              class="form-select" 
+              formControlName="type"
+              [ngClass]="{ 'is-invalid': isFieldInvalid('type') }"
+            >
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+            <div *ngIf="isFieldInvalid('type')" class="invalid-feedback">
+              {{ getErrorMessage('type') }}
+            </div>
+          </div>
         </div>
-      </div>
-  
-      <!-- Type -->
-      <div class="form-group">
-        <label for="type">Type</label>
-        <select
-          id="type"
-          class="form-control"
-          formControlName="type"
-        >
-          <option value="monthly">Monthly</option>
-          <option value="yearly">Yearly</option>
-        </select>
-      </div>
-  
-      <!-- Features -->
-      <div class="form-group">
-        <label for="features">Features</label>
-        <textarea
-          id="features"
-          class="form-control"
-          formControlName="features"
-          placeholder="Enter subscription features"
-        ></textarea>
-      </div>
-  
-      <!-- Image Upload -->
-      <div class="form-group">
-        <label for="image">Subscription Image</label>
-        <input
-          type="file"
-          id="image"
-          class="form-control"
-          (change)="onFileSelected($event)"
-          accept="image/*"
-        />
-      </div>
-  
-      <!-- Submit Button -->
-      <button type="submit" [disabled]="subscriptionForm.invalid">Create Subscription</button>
-    </form>
+
+        <!-- Features -->
+        <div class="mb-3">
+          <label for="features" class="form-label">Features</label>
+          <textarea
+            id="features"
+            class="form-control"
+            formControlName="features"
+            placeholder="Enter subscription features"
+            rows="3"
+            [ngClass]="{ 'is-invalid': isFieldInvalid('features') }"
+          ></textarea>
+          <div *ngIf="isFieldInvalid('features')" class="invalid-feedback">
+            {{ getErrorMessage('features') }}
+          </div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="mb-3">
+          <label for="image" class="form-label">Subscription Image</label>
+          <input
+            type="file"
+            id="image"
+            class="form-control"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            [ngClass]="{ 'is-invalid': isFieldInvalid('image') }"
+          />
+          <div *ngIf="isFieldInvalid('image')" class="invalid-feedback">
+            {{ getErrorMessage('image') }}
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary" [disabled]="subscriptionForm.invalid">
+            Create Subscription
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
+</div>

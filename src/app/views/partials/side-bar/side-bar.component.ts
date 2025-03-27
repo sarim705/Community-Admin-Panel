@@ -23,6 +23,13 @@ export class SideBarComponent {
     public appWorker: AppWorker,
   ) {}
 
+  isSidebarOpen = false;
+
+toggleSidebar() {
+  this.isSidebarOpen = !this.isSidebarOpen;
+}
+
+
   logout = async () => {
     let confirm = await swalHelper.confirmation(
       'Logout',

@@ -9,7 +9,7 @@ import { swalHelper } from '../../../core/constants/swal-helper';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './subscription.component.html',
-  styleUrls: ['./subscription.component.css']
+  styleUrls: ['./subscription.component.scss']
 })
 export class SubscriptionComponent {
   subscriptionForm: FormGroup;
@@ -21,13 +21,30 @@ export class SubscriptionComponent {
   ) {
     this.subscriptionForm = this.fb.group({
       name: ['', Validators.required],
-      description: [''],
+      description: ['', Validators.required],
       amount: ['', [Validators.required, Validators.min(0)]],
       duration: ['', Validators.required],
       type: ['monthly', Validators.required],
-      features: [''],
-      image: [null]
+      features: ['', Validators.required],
+      image: [null, Validators.required]
     });
+  }
+
+  // Helper method to check if a field is invalid
+  isFieldInvalid(field: string): boolean {
+    const control = this.subscriptionForm.get(field);
+    return control ? control.invalid && (control.dirty || control.touched) : false;
+  }
+
+  // Helper method to get error message for a field
+  getErrorMessage(field: string): string {
+    const control = this.subscriptionForm.get(field);
+    if (control?.errors?.['required']) {
+      return 'This field is required';
+    } else if (control?.errors?.['min']) {
+      return 'Amount must be non-negative';
+    }
+    return '';
   }
 
   onFileSelected(event: any) {
@@ -40,7 +57,9 @@ export class SubscriptionComponent {
 
   async onSubmit() {
     if (this.subscriptionForm.invalid) {
-      swalHelper.showToast('Please fill in all required fields', 'warning');
+      // Mark all fields as touched to display validation errors
+      this.subscriptionForm.markAllAsTouched();
+      swalHelper.showToast('Please fill in all required fields correctly', 'warning');
       return;
     }
 
