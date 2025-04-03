@@ -1,0 +1,290 @@
+<div class="post-management-container">
+  <div class="header-section d-flex justify-content-between align-items-center mb-3">
+    <div>
+
+      <h2>Post Management</h2>
+    </div>
+    <div>
+
+      <button class="btn btn-success add-post-btn" (click)="openCreateModal()">
+        <i class="bi bi-plus-circle"></i> Add Post
+      </button>
+    </div>
+  </div>
+
+  <!-- Posts List -->
+  <div class="posts-list-container" *ngIf="posts.length > 0; else noPosts">
+    <div class="loader-container" *ngIf="isLoading">
+      <div class="loader"></div>
+    </div>
+    
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Type</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let post of posts">
+          <td>
+            <img 
+              [src]="authService.getImageUrl(post.image)" 
+              alt="{{post.title}}" 
+              class="post-thumbnail" 
+              (error)="onImageError($event)"
+            />
+          </td>
+          <td>
+            <span [ngClass]="getTypeBadgeClass(post.type)">
+              {{post.type | titlecase}}
+            </span>
+          </td>
+          <td>{{post.title}}</td>
+          <td>{{post.description | slice:0:50}}{{post.description.length > 50 ? '...' : ''}}</td>
+          <td>{{post.createdAt | date:'mediumDate'}}</td>
+          <td class="action-buttons">
+            <button class="btn btn-sm  btn-outline-primary" (click)="editPost(post)">
+              <i class="bi bi-pencil-square"></i> Edit
+            </button>
+            <button class="btn btn-sm btn-outline-danger ms-2" (click)="confirmDelete(post._id)">
+              <i class="bi bi-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalPages > 1">
+      <nav aria-label="Post pagination">
+        <ul class="pagination">
+          <li class="page-item" [ngClass]="{ 'disabled': currentPage === 1 }">
+            <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of getPageNumbers()" [ngClass]="{ 'active': currentPage === page }">
+            <a class="page-link" (click)="changePage(page)">{{page}}</a>
+          </li>
+          <li class="page-item" [ngClass]="{ 'disabled': currentPage === totalPages }">
+            <a class="page-link" (click)="changePage(currentPage + 1)" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <ng-template #noPosts>
+    <div class="no-posts-container" *ngIf="!isLoading">
+      <p>No posts found. Create your first post by clicking the button above.</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Modal for Create/Edit Post -->
+<div class="modal" tabindex="-1" [ngClass]="{'show': showModal}" [ngStyle]="{'display': showModal ? 'block' : 'none'}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{isEditMode ? 'Edit' : 'Create'}} Post</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+          <!-- Post Type -->
+          <div class="form-group mb-3">
+            <label for="type">Post Type</label>
+            <select 
+              id="type" 
+              class="form-control" 
+              formControlName="type"
+              (change)="onTypeChange()"
+            >
+              <option value="">Select Type</option>
+              <option value="news">News</option>
+              <option value="event">Event</option>
+              <option value="announcement">Announcement</option>
+            </select>
+            <div *ngIf="postForm.get('type')?.invalid && (postForm.get('type')?.touched || postForm.get('type')?.dirty)" class="text-danger">
+              Post type is required.
+            </div>
+          </div>
+          
+          <!-- Title -->
+          <div class="form-group mb-3">
+            <label for="title">Title</label>
+            <input
+              type="text"
+              id="title"
+              class="form-control"
+              formControlName="title"
+              placeholder="Enter post title"
+            />
+            <div *ngIf="postForm.get('title')?.invalid && (postForm.get('title')?.touched || postForm.get('title')?.dirty)" class="text-danger">
+              Title is required.
+            </div>
+          </div>
+          
+          <!-- Description -->
+          <div class="form-group mb-3">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              class="form-control"
+              formControlName="description"
+              placeholder="Enter post description"
+              rows="4"
+            ></textarea>
+            <div *ngIf="postForm.get('description')?.invalid && (postForm.get('description')?.touched || postForm.get('description')?.dirty)" class="text-danger">
+              Description is required.
+            </div>
+          </div>
+          
+          <!-- Event Fields (Conditional) -->
+          <div *ngIf="postForm.get('type')?.value === 'event'">
+            <div class="row">
+              <!-- Start Date & End Date -->
+              <div class="col-md-6 mb-3">
+                <div class="form-group">
+                  <label for="startDate">Start Date</label>
+                  <input
+                    type="date"
+                    id="startDate"
+                    class="form-control"
+                    formControlName="startDate"
+                  />
+                  <div *ngIf="postForm.get('startDate')?.invalid && (postForm.get('startDate')?.touched || postForm.get('startDate')?.dirty)" class="text-danger">
+                    Start date is required.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-group">
+                  <label for="endDate">End Date</label>
+                  <input
+                    type="date"
+                    id="endDate"
+                    class="form-control"
+                    formControlName="endDate"
+                  />
+                  <div *ngIf="postForm.get('endDate')?.invalid && (postForm.get('endDate')?.touched || postForm.get('endDate')?.dirty)" class="text-danger">
+                    End date is required.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Start Time & End Time -->
+              <div class="col-md-6 mb-3">
+                <div class="form-group">
+                  <label for="startTime">Start Time</label>
+                  <input
+                    type="time"
+                    id="startTime"
+                    class="form-control"
+                    formControlName="startTime"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-group">
+                  <label for="endTime">End Time</label>
+                  <input
+                    type="time"
+                    id="endTime"
+                    class="form-control"
+                    formControlName="endTime"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Location & Venue -->
+            <div class="form-group mb-3">
+              <label for="location">Location</label>
+              <input
+                type="text"
+                id="location"
+                class="form-control"
+                formControlName="location"
+                placeholder="Enter event location"
+              />
+              <div *ngIf="postForm.get('location')?.invalid && (postForm.get('location')?.touched || postForm.get('location')?.dirty)" class="text-danger">
+                Location is required.
+              </div>
+            </div>
+            
+            <div class="form-group mb-3">
+              <label for="venue">Venue</label>
+              <input
+                type="text"
+                id="venue"
+                class="form-control"
+                formControlName="venue"
+                placeholder="Enter event venue"
+              />
+              <div *ngIf="postForm.get('venue')?.invalid && (postForm.get('venue')?.touched || postForm.get('venue')?.dirty)" class="text-danger">
+                Venue is required.
+              </div>
+            </div>
+            
+            <!-- Map URL -->
+            <div class="form-group mb-3">
+              <label for="mapUrl">Map URL</label>
+              <input
+                type="url"
+                id="mapUrl"
+                class="form-control"
+                formControlName="mapUrl"
+                placeholder="Enter map URL"
+              />
+              <div *ngIf="postForm.get('mapUrl')?.invalid && (postForm.get('mapUrl')?.touched || postForm.get('mapUrl')?.dirty)" class="text-danger">
+                Map URL is required.
+              </div>
+            </div>
+          </div>
+          
+          <!-- Image Upload -->
+          <div class="form-group mb-3">
+            <label for="image">Post Image</label>
+            <input
+              type="file"
+              id="image"
+              class="form-control"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+            />
+            <div *ngIf="isEditMode && !selectedFile && currentImageUrl" class="mt-2">
+              <p>Current image:</p>
+              <img [src]="currentImageUrl" alt="Current post" class="img-thumbnail preview-image">
+            </div>
+            <div *ngIf="selectedFile && currentImageUrl" class="mt-2">
+              <p>Preview:</p>
+              <img [src]="currentImageUrl" alt="Image preview" class="img-thumbnail preview-image">
+            </div>
+            <div *ngIf="!isEditMode && postForm.get('image')?.invalid && (postForm.get('image')?.touched || postForm.get('image')?.dirty)" class="text-danger">
+              Post image is required.
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" [disabled]="postForm.invalid" (click)="onSubmit()">
+          {{isEditMode ? 'Update' : 'Create'}} Post
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal backdrop -->
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>

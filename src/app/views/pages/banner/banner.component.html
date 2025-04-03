@@ -1,91 +1,239 @@
-<div class="banner-container">
-  <h2>Create Banner</h2>
-  <form [formGroup]="bannerForm" (ngSubmit)="onSubmit()">
-    <!-- Title -->
-    <div class="form-group">
-      <label for="title">Title</label>
-      <input
-        type="text"
-        id="title"
-        class="form-control"
-        formControlName="title"
-        placeholder="Enter banner title"
-      />
-      <div *ngIf="bannerForm.get('title')?.invalid && bannerForm.get('title')?.touched" class="text-danger">
-        Title is required.
+<div class="banner-management-container">
+  <div class="header-section">
+    <h2>Banner Management</h2>
+    <button class="btn btn-success add-banner-btn" (click)="openCreateModal()">
+      <i class="bi bi-plus-circle"></i> Add Banner
+    </button>
+  </div>
+
+  <!-- Banners List -->
+  <div class="banners-list-container" *ngIf="banners.length > 0; else noBanners">
+    <div class="loader-container" *ngIf="isLoading">
+      <div class="loader"></div>
+    </div>
+    
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Dates</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let banner of banners">
+          <td>
+            <img 
+              [src]="authService.getImageUrl(banner.image)" 
+              alt="{{banner.title}}" 
+              class="banner-thumbnail" 
+              (error)="onImageError($event)"
+            />
+          </td>
+          <td>{{banner.title}}</td>
+          <td>{{banner.description | slice:0:50}}{{banner.description.length > 50 ? '...' : ''}}</td>
+          <td>
+            <div>From: {{banner.fromDate | date:'mediumDate'}}</div>
+            <div>To: {{banner.toDate | date:'mediumDate'}}</div>
+          </td>
+          <td>
+            <span [ngClass]="banner.isActive ? 'badge bg-success' : 'badge bg-danger'">
+              {{banner.isActive ? 'Active' : 'Inactive'}}
+            </span>
+          </td>
+          <td class="action-buttons">
+            <button class="btn btn-sm btn-outline-primary" (click)="editBanner(banner)">
+              <i class="bi bi-pencil-square"></i> Edit
+            </button>
+            <button class="btn btn-sm btn-outline-danger ms-2" (click)="confirmDelete(banner._id)">
+              <i class="bi bi-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalPages > 1">
+      <nav aria-label="Banner pagination">
+        <ul class="pagination">
+          <li class="page-item" [ngClass]="{ 'disabled': currentPage === 1 }">
+            <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of getPageNumbers()" [ngClass]="{ 'active': currentPage === page }">
+            <a class="page-link" (click)="changePage(page)">{{page}}</a>
+          </li>
+          <li class="page-item" [ngClass]="{ 'disabled': currentPage === totalPages }">
+            <a class="page-link" (click)="changePage(currentPage + 1)" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <ng-template #noBanners>
+    <div class="no-banners-container" *ngIf="!isLoading">
+      <p>No banners found. Create your first banner by clicking the button above.</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Modal for Create/Edit Banner -->
+<div class="modal" tabindex="-1" [ngClass]="{'show': showModal}" [ngStyle]="{'display': showModal ? 'block' : 'none'}">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{editMode ? 'Edit' : 'Create'}} Banner</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="bannerForm" (ngSubmit)="onSubmit()">
+          <!-- Hidden ID field for edit mode -->
+          <input type="hidden" formControlName="bannerId" *ngIf="editMode">
+          
+          <!-- Title -->
+          <div class="form-group mb-3">
+            <label for="title">Title</label>
+            <input
+              type="text"
+              id="title"
+              class="form-control"
+              formControlName="title"
+              placeholder="Enter banner title"
+            />
+            <div *ngIf="bannerForm.get('title')?.invalid && (bannerForm.get('title')?.touched || bannerForm.get('title')?.dirty)" class="text-danger">
+              Title is required.
+            </div>
+          </div>
+          
+          <!-- Description -->
+          <div class="form-group mb-3">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              class="form-control"
+              formControlName="description"
+              placeholder="Enter banner description"
+              rows="3"
+            ></textarea>
+            <div *ngIf="bannerForm.get('description')?.invalid && (bannerForm.get('description')?.touched || bannerForm.get('description')?.dirty)" class="text-danger">
+              Description is required.
+            </div>
+          </div>
+          
+          <!-- Redirect URL -->
+          <div class="form-group mb-3">
+            <label for="redirectUrl">Redirect URL</label>
+            <input
+              type="text"
+              id="redirectUrl"
+              class="form-control"
+              formControlName="redirectUrl"
+              placeholder="Enter redirect URL"
+            />
+            <div *ngIf="bannerForm.get('redirectUrl')?.invalid && (bannerForm.get('redirectUrl')?.touched || bannerForm.get('redirectUrl')?.dirty)" class="text-danger">
+              Redirect URL is required.
+            </div>
+          </div>
+          
+          <!-- Contact -->
+          <div class="form-group mb-3">
+            <label for="contact">Contact</label>
+            <input
+              type="text"
+              id="contact"
+              class="form-control"
+              formControlName="contact"
+              placeholder="Enter contact information"
+            />
+            <div *ngIf="bannerForm.get('contact')?.invalid && (bannerForm.get('contact')?.touched || bannerForm.get('contact')?.dirty)" class="text-danger">
+              Contact information is required.
+            </div>
+          </div>
+          
+          <!-- Date Row with Two Columns -->
+          <div class="row">
+            <!-- From Date -->
+            <div class="col-md-6 mb-3">
+              <div class="form-group">
+                <label for="fromDate">From Date</label>
+                <input
+                  type="date"
+                  id="fromDate"
+                  class="form-control"
+                  formControlName="fromDate"
+                />
+                <div *ngIf="bannerForm.get('fromDate')?.invalid && (bannerForm.get('fromDate')?.touched || bannerForm.get('fromDate')?.dirty)" class="text-danger">
+                  From Date is required.
+                </div>
+              </div>
+            </div>
+            
+            <!-- To Date -->
+            <div class="col-md-6 mb-3">
+              <div class="form-group">
+                <label for="toDate">To Date</label>
+                <input
+                  type="date"
+                  id="toDate"
+                  class="form-control"
+                  formControlName="toDate"
+                />
+                <div *ngIf="bannerForm.get('toDate')?.invalid && (bannerForm.get('toDate')?.touched || bannerForm.get('toDate')?.dirty)" class="text-danger">
+                  To Date is required.
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Image Upload -->
+          <div class="form-group mb-3">
+            <label for="image">Banner Image</label>
+            <input
+              type="file"
+              id="image"
+              class="form-control"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+            />
+            <div *ngIf="editMode && !selectedFile && currentImageUrl" class="mt-2">
+              <p>Current image:</p>
+              <img [src]="currentImageUrl" alt="Current banner" class="img-thumbnail" style="max-height: 100px;">
+            </div>
+            <div *ngIf="!editMode && bannerForm.get('image')?.invalid && (bannerForm.get('image')?.touched || bannerForm.get('image')?.dirty)" class="text-danger">
+              Banner image is required.
+            </div>
+          </div>
+          
+          <!-- Status Toggle (for edit mode only) -->
+          <div class="form-group mb-3" *ngIf="editMode">
+            <div class="form-check form-switch">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="isActive" 
+                formControlName="isActive">
+              <label class="form-check-label" for="isActive">Banner Active</label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" [disabled]="bannerForm.invalid" (click)="onSubmit()">
+          {{editMode ? 'Update' : 'Create'}} Banner
+        </button>
       </div>
     </div>
-
-    <!-- Description -->
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea
-        id="description"
-        class="form-control"
-        formControlName="description"
-        placeholder="Enter banner description"
-      ></textarea>
-    </div>
-
-    <!-- Redirect URL -->
-    <div class="form-group">
-      <label for="redirectUrl">Redirect URL</label>
-      <input
-        type="text"
-        id="redirectUrl"
-        class="form-control"
-        formControlName="redirectUrl"
-        placeholder="Enter redirect URL"
-      />
-    </div>
-
-    <!-- Contact -->
-    <div class="form-group">
-      <label for="contact">Contact</label>
-      <input
-        type="text"
-        id="contact"
-        class="form-control"
-        formControlName="contact"
-        placeholder="Enter contact information"
-      />
-    </div>
-
-    <!-- From Date -->
-    <div class="form-group">
-      <label for="fromDate">From Date</label>
-      <input
-        type="date"
-        id="fromDate"
-        class="form-control"
-        formControlName="fromDate"
-      />
-    </div>
-
-    <!-- To Date -->
-    <div class="form-group">
-      <label for="toDate">To Date</label>
-      <input
-        type="date"
-        id="toDate"
-        class="form-control"
-        formControlName="toDate"
-      />
-    </div>
-
-    <!-- Image Upload -->
-    <div class="form-group">
-      <label for="image">Banner Image</label>
-      <input
-        type="file"
-        id="image"
-        class="form-control"
-        (change)="onFileSelected($event)"
-        accept="image/*"
-      />
-    </div>
-
-    <!-- Submit Button -->
-    <button type="submit" [disabled]="bannerForm.invalid">Create Banner</button>
-  </form>
+  </div>
 </div>
+
+<!-- Modal backdrop -->
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>

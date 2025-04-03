@@ -7,10 +7,13 @@ import { UsersComponent } from './views/pages/users/users.component';
 import { BannerComponent } from './views/pages/banner/banner.component';
 import { CouponComponent } from './views/pages/coupon/coupon.component';
 import { SubscriptionComponent } from './views/pages/subscription/subscription.component';
+import { PostComponent } from './views/pages/news/post.component';
+
+
 
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+  { path: '', pathMatch: 'full', redirectTo: 'auth/login' },
   { path: 'auth/login', component: SignInComponent },
   {
     path: '',
@@ -22,6 +25,7 @@ export const routes: Routes = [
       {path:'banner', component: BannerComponent },
       { path: 'coupon', component: CouponComponent },
       { path: 'subscription', component: SubscriptionComponent },
+      { path: 'post', component: PostComponent },
 
       
 

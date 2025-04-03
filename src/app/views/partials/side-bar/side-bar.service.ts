@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root',
@@ -29,6 +30,11 @@ export class SideBarService {
         {
           title: 'Subscription',
           link: 'subscription',
+          icon: 'credit-card',
+        },
+        {
+          title: 'News And Announcement',
+          link: 'post',
           icon: 'credit-card',
         }
 

@@ -1,70 +1,39 @@
-.container {
-  max-width: 1200px;
+/* Ensure text is clearly visible */
+.card-header h4 {
+  color: white !important; /* Force white text */
 }
 
-  
-
-
-.card {
-  border-radius: 10px;
+/* Increase search bar length */
+.search-container {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  width: 300px; /* Increased width */
+  max-width: 100%; /* Responsive */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
 }
 
-.card-header {
-  text-align: center;
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
+.search-input {
+  background-color: transparent;
+  color: white !important;
+  border: none;
+  width: 100%; /* Ensure it takes full container width */
 }
 
-.table th {
-  font-weight: 600;
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.table td {
-  vertical-align: middle;
+.search-input:focus {
+  box-shadow: none;
+  background-color: transparent;
+  color: white !important;
 }
 
-.dropdown-item {
-  cursor: pointer;
-}
-
-.pagination {
-  margin-bottom: 0;
-}
-
-.page-link {
-  cursor: pointer;
-}
-
-.badge {
-  font-size: 0.8rem;
-}
-
-/* Fix for modal backdrop issues */
-.modal-backdrop {
-  z-index: 1040;
-}
-
-.modal {
-  z-index: 1050;
-}
-
-/* Make table rows hover-friendly */
-.table-hover tbody tr:hover {
-  background-color: rgba(0, 123, 255, 0.05);
-}
-
-/* Better spacing for small screens */
-@media (max-width: 768px) {
-  .card-body {
-    padding: 1rem 0.5rem;
-  }
-  
-  .table {
-    font-size: 0.9rem;
-  }
-  
-  .pagination .page-link {
-    padding: 0.25rem 0.5rem;
-  }
+.input-group-text {
+  background-color: transparent;
+  border: none;
+  color: white !important;
 }

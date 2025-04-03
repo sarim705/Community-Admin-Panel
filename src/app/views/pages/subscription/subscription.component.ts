@@ -9,7 +9,7 @@ import { swalHelper } from '../../../core/constants/swal-helper';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './subscription.component.html',
-  styleUrls: ['./subscription.component.scss']
+  styleUrls: ['./subscription.component.css']
 })
 export class SubscriptionComponent {
   subscriptionForm: FormGroup;

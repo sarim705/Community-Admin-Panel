@@ -1,5 +1,7 @@
 export const environment = {
-  production: false,
-  baseURL: 'https://digitalcard.co.in',
-  route: 'web',
+  production: true,
+  baseURL: 'https://startupweaver.itfuturz.in/api',
+  route: 'admin',
+  imageUrl:'https://startupweaver.itfuturz.in'
+  
 };

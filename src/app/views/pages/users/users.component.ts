@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { PaginationModel } from '../../../core/utilities/pagination-model';
 import { swalHelper } from '../../../core/constants/swal-helper';
 import { debounceTime, Subject } from 'rxjs';
+import { environment } from 'src/env/env.local';
 
+declare var $: any;
 declare var bootstrap: any;
 
 @Component({
@@ -15,25 +17,22 @@ declare var bootstrap: any;
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css']
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, AfterViewInit {
   users: any[] = [];
   loading: boolean = false;
   searchQuery: string = '';
   pagination: PaginationModel | null = null;
   selectedUser: any = null;
   userDetailsModal: any;
+  imageurl = environment.imageUrl;
   
-  // Search debounce
   private searchSubject = new Subject<string>();
-  
-  // Current page and limit
   currentPage: number = 1;
   pageLimit: number = 10;
 
   constructor(private authService: AuthService) {
-    // Setup search debounce
     this.searchSubject.pipe(
-      debounceTime(500) // Wait for 500ms after the last event
+      debounceTime(500)
     ).subscribe(() => {
       this.fetchUsers();
     });
@@ -41,6 +40,14 @@ export class UsersComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchUsers();
+  }
+
+  ngAfterViewInit(): void {
+    // Initialize Bootstrap modals
+    const modalElement = document.getElementById('userDetailsModal');
+    if (modalElement) {
+      this.userDetailsModal = new bootstrap.Modal(modalElement);
+    }
   }
 
   async fetchUsers(): Promise<void> {
@@ -58,11 +65,9 @@ export class UsersComponent implements OnInit {
       if (response && response.users) {
         this.users = response.users;
         
-        // If response includes pagination data
         if (response.pagination) {
           this.pagination = response.pagination;
         } else {
-          // Create pagination object if not provided
           this.pagination = {
             docs: this.users,
             totalDocs: this.users.length,
@@ -91,32 +96,33 @@ export class UsersComponent implements OnInit {
   }
 
   onSearch(): void {
-    this.currentPage = 1; // Reset to first page when searching
+    this.currentPage = 1;
     this.searchSubject.next(this.searchQuery);
   }
 
   viewUserDetails(user: any): void {
     this.selectedUser = user;
-    this.userDetailsModal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
-    this.userDetailsModal.show();
+    if (this.userDetailsModal) {
+      this.userDetailsModal.show();
+    } else {
+      $('#userDetailsModal').modal('show');
+    }
+  }
+  
+  closeModal(): void {
+    if (this.userDetailsModal) {
+      this.userDetailsModal.hide();
+    } else {
+      $('#userDetailsModal').modal('hide');
+    }
   }
 
   editUser(user: any): void {
-    // Close modal if open
-    if (this.userDetailsModal) {
-      this.userDetailsModal.hide();
-    }
-    
-    // You would typically navigate to an edit page or open an edit modal
-    console.log('Edit user:', user);
-    // Example: this.router.navigate(['/users/edit', user._id]);
-    
-    // For now, just show a message
+    this.closeModal();
     swalHelper.showToast('Edit user functionality not implemented yet', 'info');
   }
 
   async deleteUser(userId: string): Promise<void> {
-    // Confirm before deletion
     const confirmed = await swalHelper.confirmation(
       'Delete User',
       'Are you sure you want to delete this user? This action cannot be undone.',
@@ -129,7 +135,7 @@ export class UsersComponent implements OnInit {
       try {
         await this.authService.deleteUser(userId);
         swalHelper.showToast('User deleted successfully', 'success');
-        this.fetchUsers(); // Refresh the list
+        this.fetchUsers();
       } catch (error) {
         console.error('Error deleting user:', error);
         swalHelper.showToast('Failed to delete user', 'error');
@@ -152,18 +158,15 @@ export class UsersComponent implements OnInit {
     const currentPage = this.pagination.page;
     const totalPages = this.pagination.totalPages;
     
-    // Calculate range to show
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, currentPage + 2);
     
-    // Adjust if we're near the start or end
     if (currentPage <= 3) {
       endPage = Math.min(5, totalPages);
     } else if (currentPage >= totalPages - 2) {
       startPage = Math.max(1, totalPages - 4);
     }
     
-    // Create array of page numbers
     return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   }
 }

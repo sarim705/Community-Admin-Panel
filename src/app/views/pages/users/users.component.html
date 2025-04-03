@@ -1,59 +1,50 @@
 <div class="container mt-4">
-  <div class="card shadow-lg">
-    <div class="card-header bg-primary text-white">
-      <h4 class="mb-0">Users</h4>
-    </div>
-    <div class="card-body">
-      <!-- Search Bar -->
-      <div class="mb-3">
-        <div class="input-group">
-          <input 
-            type="text" 
-            class="form-control" 
-            placeholder="Search users..." 
-            [(ngModel)]="searchQuery" 
-            (input)="onSearch()"
-          >
-          <button class="btn btn-outline-secondary" type="button" (click)="onSearch()">
-            <i class="bi bi-search"></i> Search
-          </button>
-        </div>
+  <div class="card border-0 shadow-lg rounded-3">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+      <h4 class="mb-0 fw-bold">
+        <i class="bi bi-people-fill me-2"></i>Users
+      </h4>
+      <div class="input-group search-container">
+        <span class="input-group-text bg-transparent border-0">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control form-control-sm border-0 search-input" 
+               placeholder="Search users..." 
+               [(ngModel)]="searchQuery"
+               (input)="onSearch()">
       </div>
-
+    </div>
+    <div class="card-body p-0">
       <!-- Loading Spinner -->
       <div *ngIf="loading" class="text-center my-4">
-        <div class="spinner-border text-primary" role="status">
+        <div class="spinner-border text-dark" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
 
       <!-- Users Table -->
       <div class="table-responsive" *ngIf="!loading && users.length > 0">
-        <table class="table table-striped table-hover">
+        <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>Name</th>
+              <th class="ps-4">Name</th>
               <th>Business</th>
               <th>Mobile</th>
               <th>Email</th>
               <th>User Type</th>
               <th>Status</th>
-              <th>Action</th>
+              <th class="text-end pe-4">Action</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let user of users">
-              <td>
+              <td class="ps-4">
                 <div class="d-flex align-items-center">
-                  <img 
-                    *ngIf="user.userImage" 
-                    [src]="user.userImage" 
-                    class="rounded-circle me-2" 
-                    width="40" 
-                    height="40"
-                    alt="User"
-                  >
-                  <div *ngIf="!user.userImage" class="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; color: white;">
+                  <img *ngIf="user.userImage" [src]="imageurl + '/' + user.userImage" class="rounded-circle me-2"
+                    width="40" height="40" alt="User">
+                  <div *ngIf="!user.userImage"
+                    class="bg-dark rounded-circle me-2 d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px; color: white;">
                     {{user.name.charAt(0).toUpperCase()}}
                   </div>
                   <div>
@@ -64,27 +55,32 @@
               </td>
               <td>
                 <div>{{user.businessName}}</div>
-                <small class="text-muted" *ngIf="user.businessDescription">{{user.businessDescription}}</small>
+                <small class="text-muted" *ngIf="user.businessDescription">{{user.businessDescription | slice:0:25}}{{user.businessDescription.length > 25 ? '...' : ''}}</small>
               </td>
               <td>{{user.mobileNo}}</td>
               <td>{{user.emailId || 'N/A'}}</td>
               <td>
-                <span class="badge bg-info">{{user.userType?.name || 'N/A'}}</span>
+                <span class="badge rounded-pill bg-info text-dark">{{user.userType?.name || 'N/A'}}</span>
               </td>
               <td>
-                <span class="badge" [ngClass]="user.isActive ? 'bg-success' : 'bg-danger'">
+                <span class="badge rounded-pill" [ngClass]="user.isActive ? 'bg-success' : 'bg-danger'">
                   {{user.isActive ? 'Active' : 'Inactive'}}
                 </span>
               </td>
-              <td>
+              <td class="text-end pe-4">
                 <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    Actions
+                  <button class="btn btn-sm btn-outline-dark rounded-pill dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots"></i> Actions
                   </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" (click)="viewUserDetails(user)">View Details</a></li>
-                    <li><a class="dropdown-item" (click)="editUser(user)">Edit</a></li>
-                    <li><a class="dropdown-item text-danger" (click)="deleteUser(user._id)">Delete</a></li>
+                  <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" (click)="viewUserDetails(user)">
+                      <i class="bi bi-eye me-2"></i> View Details
+                    </a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" (click)="deleteUser(user._id)">
+                      <i class="bi bi-trash me-2"></i> Delete
+                    </a></li>
                   </ul>
                 </div>
               </td>
@@ -94,21 +90,23 @@
       </div>
 
       <!-- No Users Found -->
-      <div *ngIf="!loading && users.length === 0" class="text-center my-4">
-        <div class="alert alert-info">
+      <div *ngIf="!loading && users.length === 0" class="text-center my-4 px-4">
+        <div class="alert alert-light border shadow-sm">
           <i class="bi bi-info-circle me-2"></i> No users found. Try adjusting your search criteria.
         </div>
       </div>
 
       <!-- Pagination -->
-      <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="pagination && pagination.totalPages > 1">
-        <div>
-          Showing <span class="fw-bold">{{(pagination.page - 1) * pagination.limit + 1}}</span> to 
-          <span class="fw-bold">{{pagination.page === pagination.totalPages ? pagination.totalDocs : pagination.page * pagination.limit}}</span> of 
+      <div class="d-flex justify-content-between align-items-center mt-3 px-4 pb-3"
+        *ngIf="pagination && pagination.totalPages > 1">
+        <div class="small text-muted">
+          Showing <span class="fw-bold">{{(pagination.page - 1) * pagination.limit + 1}}</span> to
+          <span class="fw-bold">{{pagination.page === pagination.totalPages ? pagination.totalDocs : pagination.page *
+            pagination.limit}}</span> of
           <span class="fw-bold">{{pagination.totalDocs}}</span> entries
         </div>
         <nav aria-label="Page navigation">
-          <ul class="pagination">
+          <ul class="pagination pagination-sm mb-0">
             <li class="page-item" [ngClass]="{'disabled': pagination.page === 1}">
               <a class="page-link" (click)="goToPage(1)" aria-label="First">
                 <span aria-hidden="true">&laquo;&laquo;</span>
@@ -139,67 +137,67 @@
   </div>
 
   <!-- User Details Modal -->
-  <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="userDetailsModalLabel">User Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal fade" id="userDetailsModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog"
+    aria-labelledby="modalTitleId" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md" role="document">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title" id="modalTitleId">
+            <i class="bi bi-person-badge me-2"></i> User Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" *ngIf="selectedUser">
           <div class="row">
             <div class="col-md-4 text-center mb-3">
-              <img 
-                *ngIf="selectedUser.userImage" 
-                [src]="selectedUser.userImage" 
-                class="img-fluid rounded-circle mb-3" 
-                style="max-width: 150px; max-height: 150px;"
-                alt="User Image"
-              >
-              <div *ngIf="!selectedUser.userImage" class="bg-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 150px; height: 150px; color: white; font-size: 3rem;">
+              <img *ngIf="selectedUser.userImage" [src]="imageurl + '/' + selectedUser.userImage"
+                class="img-fluid rounded-circle mb-3 shadow-sm" style="max-width: 150px; max-height: 150px;" alt="User Image">
+              <div *ngIf="!selectedUser.userImage"
+                class="bg-dark rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center shadow-sm"
+                style="width: 150px; height: 150px; color: white; font-size: 3rem;">
                 {{selectedUser.name.charAt(0).toUpperCase()}}
               </div>
-              <h5>{{selectedUser.name}}</h5>
-              <p class="badge bg-info">{{selectedUser.userType?.name || 'N/A'}}</p>
+              <h5 class="mb-1">{{selectedUser.name}}</h5>
+              <p class="badge bg-info text-dark rounded-pill">{{selectedUser.userType?.name || 'N/A'}}</p>
             </div>
             <div class="col-md-8">
               <div class="row mb-2">
                 <div class="col-md-6">
-                  <p class="mb-1 text-muted">Business Name:</p>
+                  <p class="mb-1 text-muted small">Business Name:</p>
                   <p class="fw-bold">{{selectedUser.businessName || 'N/A'}}</p>
                 </div>
                 <div class="col-md-6">
-                  <p class="mb-1 text-muted">Mobile Number:</p>
+                  <p class="mb-1 text-muted small">Mobile Number:</p>
                   <p class="fw-bold">{{selectedUser.mobileNo || 'N/A'}}</p>
                 </div>
               </div>
               <div class="row mb-2">
                 <div class="col-md-6">
-                  <p class="mb-1 text-muted">Email:</p>
+                  <p class="mb-1 text-muted small">Email:</p>
                   <p class="fw-bold">{{selectedUser.emailId || 'N/A'}}</p>
                 </div>
                 <div class="col-md-6">
-                  <p class="mb-1 text-muted">GSTIN:</p>
+                  <p class="mb-1 text-muted small">GSTIN:</p>
                   <p class="fw-bold">{{selectedUser.gstin || 'N/A'}}</p>
                 </div>
               </div>
               <div class="row mb-2">
                 <div class="col-12">
-                  <p class="mb-1 text-muted">Address:</p>
+                  <p class="mb-1 text-muted small">Address:</p>
                   <p class="fw-bold">{{selectedUser.address || 'N/A'}}</p>
                 </div>
               </div>
               <div class="row mb-2">
                 <div class="col-12">
-                  <p class="mb-1 text-muted">Business Description:</p>
+                  <p class="mb-1 text-muted small">Business Description:</p>
                   <p class="fw-bold">{{selectedUser.businessDescription || 'N/A'}}</p>
                 </div>
               </div>
               <div class="row mb-2" *ngIf="selectedUser.subcategories && selectedUser.subcategories.length > 0">
                 <div class="col-12">
-                  <p class="mb-1 text-muted">Subcategories:</p>
+                  <p class="mb-1 text-muted small">Subcategories:</p>
                   <div>
-                    <span class="badge bg-secondary me-1 mb-1" *ngFor="let sub of selectedUser.subcategories">
+                    <span class="badge bg-secondary me-1 mb-1 rounded-pill" *ngFor="let sub of selectedUser.subcategories">
                       {{sub.value}}
                     </span>
                   </div>
@@ -209,8 +207,9 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" (click)="editUser(selectedUser)">Edit User</button>
+          <button type="button" class="btn btn-outline-dark rounded-pill" (click)="closeModal()">
+            <i class="bi bi-x-circle me-1"></i> Close
+          </button>
         </div>
       </div>
     </div>
