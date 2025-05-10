@@ -10,37 +10,120 @@ export class SideBarService {
 
   list: any[] = [
     {
-      moduleName: 'Member',
+      moduleName: 'Startup Weaver',
+     
       menus: [
         {
-          title: 'Users',
+          title: 'Dashboard',
+          link: 'dashboard',
+          icon: 'activity', 
+        },
+        {
+          title:'Registeration',
+          link:'registerComponent',
+          icon:'rss'
+        },
+        {
+          title: 'All Members',
           link: 'users',
-          icon: 'user',
+          icon: 'users', 
         },
-        { title: 'Banner',
-          link: 'banner',
-          icon: 'monitor'
-          ,
+        
+        {
+          title: 'Countries',
+          link: 'country',
+          icon: 'gift', 
+        },
+
+        {
+          title: 'States',
+          link: 'states',
+          icon: 'volume-2', 
         },
         {
-          title: 'CreateCoupons',
-          link: 'coupon',
-          icon: 'credit-card',
+          title: 'City',
+          link:'city',
+          icon:'book'
+        },
+
+        {
+          title: 'Chapter',
+          link:'chapter',
+          icon:'book'
+        },
+
+        {
+          title: 'Category',
+          link:'category',
+          icon:'book'
         },
         {
-          title: 'Subscription',
-          link: 'subscription',
-          icon: 'credit-card',
+          title: 'LeaderBoard',
+          link:'leaderboard',
+          icon:'book'
+        },
+
+        {
+          title: 'events',
+          link: 'events',
+          icon: 'dollar-sign', 
+        },
+       
+
+        {
+          title: 'Attendence',
+          link:'attendence',
+          icon:'rss'
         },
         {
-          title: 'News And Announcement',
-          link: 'post',
-          icon: 'credit-card',
-        }
+          title: 'Referral Given Report',
+          link:'referralReport',
+          icon:'rss'
+        },
+        {
+          title: 'Testimonial Report',
+          link:'testimonialReport',
+          icon:'rss'
+        },
+        {
+          title: 'referral Recieved Report',
+          link:'referralReportRecieved',
+          icon:'rss'
+        },
+        {
+          
+          title: 'one To one Report',
+          link:'oneTooneReport',
+          icon:'rss'
+      
+        },{
+        title:'tyfcb Report',
+        link:'tyfcb',
+        icon:'rss'},
+        {
+          title:'Visitors Report',
+          link:'VisitorsReport',
+          icon:'rss'
+        },
+        
+
+        {
+          title:'Attendance Record',
+          link:'attendanceRecord',
+          icon:'rss'
+        },
+        
+        {
+          title:'Referral Points Point',
+          link:'referralPoints',
+          icon:'rss'
+        },
 
         
-        
-      ],
+      
+       
+      ]
+      
     },
     
   ];
@@ -63,79 +146,3 @@ export class SideBarService {
   }
 }
 
-
-// {
-    //   moduleName: 'Modules',
-    //   menus: [
-    //     {
-    //       title: 'Dashboard',
-    //       link: 'dashboard',
-    //       icon: 'monitor',
-    //     },
-    //     {
-    //       title: 'Admins',
-    //       link: 'admins',
-    //       icon: 'users',
-    //     },
-    //     {
-    //       title: 'Courses',
-    //       link: 'courses',
-    //       icon: 'folder-plus',
-    //     },
-    //     {
-    //       title: 'Technologies',
-    //       link: 'technologies',
-    //       icon: 'cpu',
-    //     },
-    //     {
-    //       title: 'Portfolio',
-    //       link: 'portfolio',
-    //       icon: 'globe',
-    //     },
-    //     {
-    //       title: 'Expertise',
-    //       link: 'expertise',
-    //       icon: 'trello',
-    //     },
-    //     {
-    //       title: 'Products',
-    //       link: 'products',
-    //       icon: 'archive',
-    //     },
-    //     {
-    //       title: 'Testimonial',
-    //       link: 'testimonial',
-    //       icon: 'sliders',
-    //     },
-    //     {
-    //       title: 'Hire Developers',
-    //       link: 'hire-developers',
-    //       icon: 'code',
-    //     },
-    //   ],
-    // },
-    // {
-    //   moduleName: 'Website',
-    //   menus: [
-    //     {
-    //       title: 'Job Applications',
-    //       link: 'job-applications',
-    //       icon: 'file-text',
-    //     },
-    //     {
-    //       title: 'Hiring Inquires',
-    //       link: 'hiring-inquires',
-    //       icon: 'file-text',
-    //     },
-    //     {
-    //       title: 'Course Inquires',
-    //       link: 'course-inquires',
-    //       icon: 'file-text',
-    //     },
-    //     {
-    //       title: 'Contact Inquires',
-    //       link: 'contact-inquires',
-    //       icon: 'file-text',
-    //     },
-    //   ],
-    // },

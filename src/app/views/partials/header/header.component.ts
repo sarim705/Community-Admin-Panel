@@ -19,17 +19,16 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // No need to fetch profile data if not required
+   
   }
 
-  // Logout functionality
   logout = async () => {
-    let confirm = await swalHelper.confirmation(
+    let result = await swalHelper.confirmation(
       'Logout',
       'Do you really want to logout',
       'question'
     );
-    if (confirm.isConfirmed) {
+    if (result.isConfirmed) {
       this.storage.clearAll();
       window.location.href = '/';
     }

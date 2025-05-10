@@ -1,15 +1,23 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, lastValueFrom, Observable, throwError } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { ResponseModel } from './response-model';
 import { AppStorage } from './app-storage';
 import { common } from '../constants/common';
+
+// Define an interface for the request configuration
+interface RequestConfig {
+  url: string;
+  method: string;
+  isFormData?: boolean; // Add optional isFormData property
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiManager {
   constructor(private http: HttpClient, private appStorage: AppStorage) {}
+
   private setHeaders = (headersInArray: any[]) => {
     let headers: any = {};
     headersInArray.forEach((element) => {
@@ -21,7 +29,7 @@ export class ApiManager {
   };
 
   request = async (
-    config: { url: string; method: string },
+    config: RequestConfig, // Use the interface here
     data: any,
     headers: any[]
   ) => {
@@ -35,8 +43,8 @@ export class ApiManager {
           return await firstValueFrom(
             this.http.post<ResponseModel>(
               config.url,
-              data,
-               this.setHeaders(headers)
+              data, 
+              this.setHeaders(headers)
             )
           );
         case 'PUT':

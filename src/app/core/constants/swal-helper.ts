@@ -32,14 +32,7 @@ class SwalHelper {
   };
 
   public showSwalLoading = async (title: String, html: string) => {
-    // await Swal.fire({
-    //   title,
-    //   html,
-    //   timerProgressBar: true,
-    //   didOpen: () => {
-    //     Swal.showLoading();
-    //   },
-    // });
+   
   };
 
   public hideSwalLoading = () => Swal.close();

@@ -9,4 +9,5 @@ class Session {
   public authCheckURLS: string[] = [];
 }
 
+
 export let session = new Session();

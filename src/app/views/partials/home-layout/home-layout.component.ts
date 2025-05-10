@@ -29,7 +29,7 @@ export class HomeLayoutComponent implements OnInit {
       (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) &&
       event.key.toLowerCase() == 'i'
     ) {
-      // Prevents Ctrl+Shift+I or Cmd+Shift+I
+      
       event.preventDefault();
     } else if (event.key === 'F12') {
       // Prevents F12

@@ -1,5 +1,5 @@
 <!-- Sidebar Toggle Button for Mobile -->
-<button class="btn btn-primary d-lg-none" type="button" (click)="toggleSidebar()">
+<button class="btn btn-0primary d-lg-none" type="button" (click)="toggleSidebar()">
   ☰ Menu
 </button>
 
@@ -7,9 +7,9 @@
 <nav id="sidebar" class="sidebar js-sidebar" [class.active]="isSidebarOpen">
   <div class="sidebar-content js-simplebar">
     <!-- Brand Logo -->
-    <a class="sidebar-brand text-truncate" [routerLink]="'business-cards'">
+    <a class="sidebar-brand text-truncate" >
       <div class="p-3 text-center" style="background: aliceblue; color: #126f8a;">
-        <h5 class="mb-0">Startup Weaver</h5>
+        <h5 class="mb-0">Community Application</h5>
       </div>
     </a>
 
@@ -17,7 +17,7 @@
     <div class="sidebar-nav vh-100 overflow-auto">
       <ul class="list-unstyled">
         <ng-container *ngFor="let module of sideBarService.list">
-          <li class="sidebar-header">{{ module.moduleName }}</li>
+        
           <li class="sidebar-item" *ngFor="let item of module.menus; let i = index">
             <ng-container *ngIf="!item.menu">
               <a class="sidebar-link user-select-none" [routerLink]="item.link" [queryParams]="item.query || {}">
@@ -25,7 +25,7 @@
                 <span class="align-middle">{{ item.title }}</span>
               </a>
             </ng-container>
-            <ng-container *ngIf="item.menu">
+            <!-- <ng-container *ngIf="item.menu">
               <a class="sidebar-link user-select-none" (click)="sideBarService.toggleSubMenu(i)">
                 <i class="align-middle" [attr.data-feather]="item?.icon"></i>
                 <span class="align-middle">{{ item.title }}</span>
@@ -38,7 +38,7 @@
                   </a>
                 </li>
               </ul>
-            </ng-container>
+            </ng-container> -->
           </li>
         </ng-container>
 

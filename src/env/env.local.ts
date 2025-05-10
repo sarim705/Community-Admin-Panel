@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  baseURL: 'http://localhost:5000/api',
-  route: 'admin',
-  imageUrl:'http://localhost:5000'
+  baseURL: 'http://localhost:2026/api',
+  route: 'users',
+ 
+  imageUrl:'http://localhost:2026'
 };

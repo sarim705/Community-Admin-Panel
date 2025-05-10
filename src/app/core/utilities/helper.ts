@@ -44,7 +44,7 @@ export class Helper {
       cancelButtonText: cancelText,
       confirmButtonText: confirmText,
     });
-    return result.isConfirmed ? true : false;
+    return result.isConfirmed? true : false;
   };
 
   public loadScript(url: string) {
