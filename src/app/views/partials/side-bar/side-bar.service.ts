@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -11,122 +11,106 @@ export class SideBarService {
   list: any[] = [
     {
       moduleName: 'Startup Weaver',
-     
       menus: [
         {
           title: 'Dashboard',
           link: 'dashboard',
-          icon: 'activity', 
+          icon: 'home', // Feather: Home page/dashboard
         },
         {
-          title:'Registeration',
-          link:'registerComponent',
-          icon:'rss'
+          title: 'Registeration',
+          link: 'registerComponent',
+          icon: 'user-plus', // Feather: Adding a new user/registration
         },
         {
           title: 'All Members',
           link: 'users',
-          icon: 'users', 
+          icon: 'users', // Feather: Multiple users/members
         },
-        
         {
           title: 'Countries',
           link: 'country',
-          icon: 'gift', 
+          icon: 'globe', // Feather: Global/countries
         },
-
         {
           title: 'States',
           link: 'states',
-          icon: 'volume-2', 
+          icon: 'map', // Feather: Regional divisions
         },
         {
           title: 'City',
-          link:'city',
-          icon:'book'
+          link: 'city',
+          icon: 'map-pin', // Feather: Specific locations/cities
         },
-
         {
           title: 'Chapter',
-          link:'chapter',
-          icon:'book'
+          link: 'chapter',
+          icon: 'bookmark', // Feather: Organized groups/chapters
         },
-
         {
           title: 'Category',
-          link:'category',
-          icon:'book'
+          link: 'category',
+          icon: 'tag', // Feather: Categorization/tags
         },
         {
           title: 'LeaderBoard',
-          link:'leaderboard',
-          icon:'book'
+          link: 'leaderboard',
+          icon: 'award', // Feather: Rankings/achievements
         },
-
         {
           title: 'events',
           link: 'events',
-          icon: 'dollar-sign', 
+          icon: 'calendar', // Feather: Events/schedule
         },
-       
-
         {
           title: 'Attendence',
-          link:'attendence',
-          icon:'rss'
+          link: 'attendence',
+          icon: 'check-square', // Feather: Tracking attendance
         },
         {
           title: 'Referral Given Report',
-          link:'referralReport',
-          icon:'rss'
+          link: 'referralReport',
+          icon: 'share', // Feather: Giving referrals
         },
         {
           title: 'Testimonial Report',
-          link:'testimonialReport',
-          icon:'rss'
+          link: 'testimonialReport',
+          icon: 'message-square', // Feather: Testimonials/comments
         },
         {
           title: 'referral Recieved Report',
-          link:'referralReportRecieved',
-          icon:'rss'
+          link: 'referralReportRecieved',
+          icon: 'download', // Feather: Receiving referrals
         },
         {
-          
           title: 'one To one Report',
-          link:'oneTooneReport',
-          icon:'rss'
-      
-        },{
-        title:'tyfcb Report',
-        link:'tyfcb',
-        icon:'rss'},
-        {
-          title:'Visitors Report',
-          link:'VisitorsReport',
-          icon:'rss'
+          link: 'oneTooneReport',
+          icon: 'user-check', // Feather: One-to-one interactions
         },
-        
-
         {
-          title:'Attendance Record',
-          link:'attendanceRecord',
-          icon:'rss'
+          title: 'tyfcb Report',
+          link: 'tyfcb',
+          icon: 'trending-up', // Feather: Business analytics (assuming TYFCB is "Thank You For Closing Business")
         },
-        
         {
-          title:'Referral Points Point',
-          link:'referralPoints',
-          icon:'rss'
+          title: 'Visitors Report',
+          link: 'VisitorsReport',
+          icon: 'user', // Feather: Visitor tracking
         },
-
-        
-      
-       
-      ]
-      
+        {
+          title: 'Attendance Record',
+          link: 'attendanceRecord',
+          icon: 'book', // Feather: Detailed attendance records
+        },
+        {
+          title: 'Referral Points Point',
+          link: 'referralPoints',
+          icon: 'star', // Feather: Points/rewards
+        },
+      ],
     },
-    
   ];
+
   isMobile: boolean = false;
   activeSubMenuIndex: number | null = null;
 
@@ -137,6 +121,7 @@ export class SideBarService {
       this.activeSubMenuIndex = index;
     }
   }
+
   navigateWithQueryParams(submenu: any) {
     this.router.navigate([submenu.link], { queryParams: submenu.queryParams });
   }
@@ -145,4 +130,3 @@ export class SideBarService {
     this.router.navigateByUrl(`/${item}`);
   }
 }
-
