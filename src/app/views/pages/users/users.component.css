@@ -172,3 +172,9 @@
 .nav-pills .nav-link.active {
   background-color: var(--bs-primary);
 }
+
+/* PDF Tab Button Styling */
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

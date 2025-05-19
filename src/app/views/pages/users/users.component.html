@@ -146,36 +146,85 @@
           <li class="nav-item">
             <a class="nav-link" [class.active]="activeTab === 'referrals'" (click)="setActiveTab('referrals')" style="cursor: pointer;">Referrals</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeTab === 'pdf'" (click)="setActiveTab('pdf')" style="cursor: pointer;">PDF</a>
+          </li>
         </ul>
-
-        <!-- Profile Tab Content -->
+ <!-- Profile Tab Content -->
         <div *ngIf="activeTab === 'profile'">
           <div class="row">
-            <div class="col-md-4 text-center mb-4">
-              <div class="position-relative d-inline-block">
-                <img *ngIf="selectedUser.profilePic" [src]="imageurl + '/' + selectedUser.profilePic"
-                  class="img-fluid rounded-circle mb-3 shadow-sm border border-3 border-white" 
-                  style="width: 180px; height: 180px; object-fit: cover;" 
-                  alt="User Image" onerror="this.src='assets/images/placeholder-user.png'">
-                <div *ngIf="!selectedUser.profilePic"
-                  class="bg-gradient-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center shadow-sm border border-3 border-white"
-                  style="width: 180px; height: 180px; color: white; font-size: 4rem;">
-                  {{selectedUser.name ? selectedUser.name.charAt(0).toUpperCase() : 'U'}}
+            <!-- Left Column - Profile Info -->
+            <div class="col-md-4">
+              <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body text-center">
+                  <div class="position-relative d-inline-block">
+                    <img *ngIf="selectedUser.profilePic" [src]="imageurl + '/' + selectedUser.profilePic"
+                      class="img-fluid rounded-circle mb-3 shadow-sm border border-3 border-white" 
+                      style="width: 180px; height: 180px; object-fit: cover;" 
+                      alt="User Image" onerror="this.src='assets/images/placeholder-image.png'">
+                    <div *ngIf="!selectedUser.profilePic"
+                      class="bg-gradient-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center shadow-sm border border-3 border-white"
+                      style="width: 180px; height: 180px; color: white; font-size: 4rem;">
+                      {{selectedUser.name ? selectedUser.name.charAt(0).toUpperCase() : 'U'}}
+                    </div>
+                  </div>
+                  <h4 class="mb-1 mt-2">{{selectedUser.name || 'Unknown User'}}</h4>
+                  <p class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">{{selectedUser.meeting_role || 'N/A'}}</p>
+                  
+                  <div class="mt-2">
+                    <span class="badge bg-light text-dark px-3 py-2">Chapter: {{selectedUser.chapter_name|| 'N/A'}}</span>
+                  </div>
+              
+                  <div class="mt-3" *ngIf="selectedUser.points !== undefined">
+                    <span class="badge bg-light text-dark px-3 py-2">Points: {{selectedUser.points}}</span>
+                  </div>
                 </div>
               </div>
-              <h4 class="mb-1 mt-2">{{selectedUser.name || 'Unknown User'}}</h4>
-              <p class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">{{selectedUser.meeting_role || 'N/A'}}</p>
-              
-              <div class="mt-2">
-                <span class="badge bg-light text-dark px-3 py-2">Chapter: {{selectedUser.chapter_name|| 'N/A'}}</span>
+
+              <!-- Contact Information Card -->
+              <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-light py-3">
+                  <h6 class="mb-0 fw-bold"><i class="bi bi-person-lines-fill me-2"></i> Contact Information</h6>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <p class="mb-1 text-muted small"><i class="bi bi-telephone-fill me-2"></i>Mobile Number:</p>
+                    <p class="fw-bold">{{selectedUser.mobile_number || 'N/A'}}</p>
+                  </div>
+                  <div class="mb-3">
+                    <p class="mb-1 text-muted small"><i class="bi bi-envelope-fill me-2"></i>Email:</p>
+                    <p class="fw-bold">{{selectedUser.email || 'N/A'}}</p>
+                  </div>
+                  <div class="mb-3" *ngIf="selectedUser.emergency_contact">
+                    <p class="mb-1 text-muted small"><i class="bi bi-telephone-fill me-2"></i>Emergency Contact:</p>
+                    <p class="fw-bold">{{selectedUser.emergency_contact || 'N/A'}}</p>
+                  </div>
+                  <div class="mb-3" *ngIf="selectedUser.date_of_birth">
+                    <p class="mb-1 text-muted small"><i class="bi bi-calendar-fill me-2"></i>Date of Birth:</p>
+                    <p class="fw-bold">{{selectedUser.date_of_birth | date:'mediumDate'}}</p>
+                  </div>
+                  <div class="mb-3" *ngIf="selectedUser.address">
+                    <p class="mb-1 text-muted small"><i class="bi bi-geo-alt-fill me-2"></i>Address:</p>
+                    <p class="fw-bold">{{selectedUser.address || 'N/A'}}</p>
+                  </div>
+                </div>
               </div>
-          
-              <div class="mt-3" *ngIf="selectedUser.points !== undefined">
-                <span class="badge bg-light text-dark px-3 py-2">Points: {{selectedUser.points}}</span>
+
+              <!-- Introduction Card -->
+              <div class="card border-0 shadow-sm rounded-4" *ngIf="selectedUser.introduction_details">
+                <div class="card-header bg-light py-3">
+                  <h6 class="mb-0 fw-bold"><i class="bi bi-info-circle-fill me-2"></i> Introduction</h6>
+                </div>
+                <div class="card-body">
+                  <p class="fw-bold">{{selectedUser.introduction_details}}</p>
+                </div>
               </div>
             </div>
+
+            <!-- Right Column - Other Details -->
             <div class="col-md-8">
-              <div class="card border-0 shadow-sm rounded-4 mb-3" *ngIf="selectedUser.business && selectedUser.business.length > 0">
+              <!-- Business Information Card - Expanded -->
+              <div class="card border-0 shadow-sm rounded-4 mb-4" *ngIf="selectedUser.business && selectedUser.business.length > 0">
                 <div class="card-header bg-light py-3">
                   <h6 class="mb-0 fw-bold"><i class="bi bi-building me-2"></i> Business Information</h6>
                 </div>
@@ -190,17 +239,63 @@
                       <p class="fw-bold">{{selectedUser.business[0]?.business_type || 'N/A'}}</p>
                     </div>
                   </div>
-                  <div class="row mb-3" *ngIf="selectedUser.business[0]?.category || selectedUser.business[0]?.sub_category">
-                    <div class="col-md-6" *ngIf="selectedUser.business[0]?.category">
+                  <div class="row mb-3">
+                    <div class="col-md-6">
                       <p class="mb-1 text-muted small">Category:</p>
-                      <p class="fw-bold">{{selectedUser.business[0]?.category}}</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.category || 'N/A'}}</p>
                     </div>
-                    <div class="col-md-6" *ngIf="selectedUser.business[0]?.sub_category">
+                    <div class="col-md-6">
                       <p class="mb-1 text-muted small">Sub-Category:</p>
-                      <p class="fw-bold">{{selectedUser.business[0]?.sub_category}}</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.sub_category || 'N/A'}}</p>
                     </div>
                   </div>
                   <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Product:</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.product || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Service:</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.service || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Business Formation:</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.formation || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Establishment Date:</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.establishment | date:'mediumDate' }}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Team Size:</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.team_size || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Business Email:</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.email || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Business Phone:</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.mobile_number || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Website:</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.website || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <p class="mb-1 text-muted small">Business Address:</p>
+                      <p class="fw-bold">{{selectedUser.business[0]?.address || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row">
                     <div class="col-12">
                       <p class="mb-1 text-muted small">Business Description:</p>
                       <p class="fw-bold">{{selectedUser.business[0]?.about_business_details || 'N/A'}}</p>
@@ -208,42 +303,160 @@
                   </div>
                 </div>
               </div>
-              
-              <div class="card border-0 shadow-sm rounded-4">
+
+              <!-- Bio Details Card -->
+              <div class="card border-0 shadow-sm rounded-4 mb-4" *ngIf="selectedUser.bioDetails">
                 <div class="card-header bg-light py-3">
-                  <h6 class="mb-0 fw-bold"><i class="bi bi-person-lines-fill me-2"></i> Contact Information</h6>
+                  <h6 class="mb-0 fw-bold"><i class="bi bi-person-vcard-fill me-2"></i> Bio Details</h6>
                 </div>
                 <div class="card-body">
                   <div class="row mb-3">
                     <div class="col-md-6">
-                      <p class="mb-1 text-muted small"><i class="bi bi-telephone-fill me-2"></i>Mobile Number:</p>
-                      <p class="fw-bold">{{selectedUser.mobile_number || 'N/A'}}</p>
+                      <p class="mb-1 text-muted small">Spouse:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.spouse || 'N/A'}}</p>
                     </div>
                     <div class="col-md-6">
-                      <p class="mb-1 text-muted small"><i class="bi bi-envelope-fill me-2"></i>Email:</p>
-                      <p class="fw-bold">{{selectedUser.email || 'N/A'}}</p>
+                      <p class="mb-1 text-muted small">Children:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.children || 'N/A'}}</p>
                     </div>
                   </div>
-                  <div class="row mb-3" *ngIf="selectedUser.emergency_contact">
+                  <div class="row mb-3">
                     <div class="col-md-6">
-                      <p class="mb-1 text-muted small"><i class="bi bi-telephone-fill me-2"></i>Emergency Contact:</p>
-                      <p class="fw-bold">{{selectedUser.emergency_contact || 'N/A'}}</p>
+                      <p class="mb-1 text-muted small">Pets:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.pets || 'N/A'}}</p>
                     </div>
-                    <div class="col-md-6" *ngIf="selectedUser.date_of_birth">
-                      <p class="mb-1 text-muted small"><i class="bi bi-calendar-fill me-2"></i>Date of Birth:</p>
-                      <p class="fw-bold">{{selectedUser.date_of_birth | date:'mediumDate'}}</p>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">City of Residence:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.cityOfResidence || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Years in City:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.yearInThatCity || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Years in Business:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.yearsInBusiness || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Hobbies:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.hobbies || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Previous Business Types:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.previousTypesOfBusiness || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <p class="mb-1 text-muted small">My Burning Desire:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.myBurningDesire || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <p class="mb-1 text-muted small">My Key to Success:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.myKeyToSuccess || 'N/A'}}</p>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-12">
-                      <p class="mb-1 text-muted small"><i class="bi bi-geo-alt-fill me-2"></i>Address:</p>
-                      <p class="fw-bold">{{selectedUser.address || 'N/A'}}</p>
+                      <p class="mb-1 text-muted small">Something No One Knows:</p>
+                      <p class="fw-bold">{{selectedUser.bioDetails.somethingNoOne || 'N/A'}}</p>
                     </div>
                   </div>
-                  <div class="row mt-3" *ngIf="selectedUser.introduction_details">
+                </div>
+              </div>
+
+              <!-- Growth Sheet Card -->
+              <div class="card border-0 shadow-sm rounded-4 mb-4" *ngIf="selectedUser.growthSheet">
+                <div class="card-header bg-light py-3">
+                  <h6 class="mb-0 fw-bold"><i class="bi bi-graph-up-arrow me-2"></i> Growth Sheet</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Accomplishment:</p>
+                      <p class="fw-bold">{{selectedUser.growthSheet.accomplishment || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Goals:</p>
+                      <p class="fw-bold">{{selectedUser.growthSheet.goals || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Skills:</p>
+                      <p class="fw-bold">{{selectedUser.growthSheet.skills || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Interests:</p>
+                      <p class="fw-bold">{{selectedUser.growthSheet.interests || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row">
                     <div class="col-12">
-                      <p class="mb-1 text-muted small"><i class="bi bi-info-circle-fill me-2"></i>Introduction:</p>
-                      <p class="fw-bold">{{selectedUser.introduction_details}}</p>
+                      <p class="mb-1 text-muted small">Networks:</p>
+                      <p class="fw-bold">{{selectedUser.growthSheet.networks || 'N/A'}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Top Profile Card -->
+              <div class="card border-0 shadow-sm rounded-4 mb-4" *ngIf="selectedUser.topProfile">
+                <div class="card-header bg-light py-3">
+                  <h6 class="mb-0 fw-bold"><i class="bi bi-award-fill me-2"></i> Top Profile</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Favorite LGN Story:</p>
+                      <p class="fw-bold">{{selectedUser.topProfile.favouriteLgnStory || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Top Problem Solved:</p>
+                      <p class="fw-bold">{{selectedUser.topProfile.topProblemSolved || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Top Product:</p>
+                      <p class="fw-bold">{{selectedUser.topProfile.topProduct || 'N/A'}}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1 text-muted small">Ideal Referral:</p>
+                      <p class="fw-bold">{{selectedUser.topProfile.idealReferral || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <p class="mb-1 text-muted small">Ideal Referral Partner:</p>
+                      <p class="fw-bold">{{selectedUser.topProfile.idealReferralParter || 'N/A'}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Weekly Presentation Card -->
+              <div class="card border-0 shadow-sm rounded-4" *ngIf="selectedUser.weeklyPresentation">
+                <div class="card-header bg-light py-3">
+                  <h6 class="mb-0 fw-bold"><i class="bi bi-mic-fill me-2"></i> Weekly Presentation</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <p class="mb-1 text-muted small">Presentation 1:</p>
+                      <p class="fw-bold">{{selectedUser.weeklyPresentation.presentation1 || 'N/A'}}</p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <p class="mb-1 text-muted small">Presentation 2:</p>
+                      <p class="fw-bold">{{selectedUser.weeklyPresentation.presentation2 || 'N/A'}}</p>
                     </div>
                   </div>
                 </div>
@@ -251,6 +464,10 @@
             </div>
           </div>
         </div>
+
+        <!-- Referrals Tab Content (unchanged) -->
+   
+       
 
         <!-- Referrals Tab Content -->
         <div *ngIf="activeTab === 'referrals'">
@@ -363,6 +580,23 @@
                   </div>
                 </ng-template>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PDF Tab Content -->
+        <div *ngIf="activeTab === 'pdf'">
+          <div class="card border-0 shadow-sm rounded-4 mb-3">
+            <div class="card-header bg-light py-3">
+              <h6 class="mb-0 fw-bold"><i class="bi bi-file-earmark-pdf-fill me-2"></i> Generate PDF</h6>
+            </div>
+            <div class="card-body text-center">
+              <p class="text-muted mb-4">Click the button below to generate a PDF with the user's details, including contact and business information.</p>
+              <button class="btn btn-primary rounded-pill px-4" (click)="generateUserPDF()" [disabled]="pdfLoading">
+                <i class="bi bi-download me-2"></i>
+                <span *ngIf="!pdfLoading">Generate PDF</span>
+                <span *ngIf="pdfLoading">Generating...</span>
+              </button>
             </div>
           </div>
         </div>

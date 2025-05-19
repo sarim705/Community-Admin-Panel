@@ -94,19 +94,20 @@
                   [(ngModel)]="registerForm.date_of_birth" name="date_of_birth" required>
               </div>
               <div class="col-md-6 mb-3">
-                <label for="city" class="form-label">City</label>
+                <label for="country" class="form-label">Country</label>
                 <ng-select
-                  id="city"
-                  [items]="cities"
+                  id="country"
+                  [items]="countries"
                   bindLabel="name"
                   bindValue="name"
-                  placeholder="Select city"
-                  [(ngModel)]="registerForm.city"
-                  name="city"
+                  placeholder="Select country"
+                  [(ngModel)]="registerForm.country"
+                  name="country"
                   required
-                  [loading]="citiesLoading">
+                  [loading]="countriesLoading">
                 </ng-select>
-                <div *ngIf="citiesLoading" class="text-muted mt-1 small">Loading cities...</div>
+                <div *ngIf="countriesLoading" class="text-muted mt-1 small">Loading countries...</div>
+             
               </div>
             </div>
   
@@ -127,19 +128,19 @@
                 <div *ngIf="statesLoading" class="text-muted mt-1 small">Loading states...</div>
               </div>
               <div class="col-md-6 mb-3">
-                <label for="country" class="form-label">Country</label>
+                <label for="city" class="form-label">City</label>
                 <ng-select
-                  id="country"
-                  [items]="countries"
+                  id="city"
+                  [items]="cities"
                   bindLabel="name"
                   bindValue="name"
-                  placeholder="Select country"
-                  [(ngModel)]="registerForm.country"
-                  name="country"
+                  placeholder="Select city"
+                  [(ngModel)]="registerForm.city"
+                  name="city"
                   required
-                  [loading]="countriesLoading">
+                  [loading]="citiesLoading">
                 </ng-select>
-                <div *ngIf="countriesLoading" class="text-muted mt-1 small">Loading countries...</div>
+                <div *ngIf="citiesLoading" class="text-muted mt-1 small">Loading cities...</div>    
               </div>
             </div>
   

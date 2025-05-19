@@ -236,6 +236,8 @@ export class AuthService {
     }
   };
 
+  
+
   async adminLogin(credentials: { email: string; password: string }): Promise<AdminLoginResponse> {
     try {
       this.headers = []; // No token needed for login
@@ -294,7 +296,7 @@ export class AuthService {
       );
       
       console.log('API Response: for auth service', response);
-      return response;
+      return response.data;
     } catch (error) {
       console.error('API Error:', error);
       swalHelper.showToast('Failed to fetch users', 'error');
@@ -567,7 +569,6 @@ export class DashboardService {
     }
   }
 }
-
 export interface EventResponse {
   docs: Event[];
   totalDocs: string | number;
@@ -588,7 +589,7 @@ export interface Event {
   paid: boolean;
   date: string;
   thumbnail: string;
-  location: string; // Added location field
+  location: string;
   chapter_name: string;
   createdAt: string;
   photos: string[];
@@ -601,106 +602,117 @@ export interface Event {
 })
 export class EventService {
   private headers: any = [];
-  
+
   constructor(private apiManager: ApiManager, private storage: AppStorage) {}
-  
+
   private getHeaders = () => {
-    this.headers = [];
-    let token = this.storage.get(common.TOKEN);
-    
-    if (token != null) {
-      this.headers.push({ Authorization: `Bearer ${token}` });
-    }
+      this.headers = [];
+      let token = this.storage.get(common.TOKEN);
+      if (token != null) {
+          this.headers.push({ Authorization: `Bearer ${token}` });
+      }
   };
 
   async getAllEvents(): Promise<Event[]> {
-    try {
-      this.getHeaders();
-      
-      const response = await this.apiManager.request(
-        {
-          url: apiEndpoints.GET_ALL_EVENTS,
-          method: 'GET',
-        },
-        null,
-        this.headers
-      );
-      
-      return response.data || [];
-    } catch (error) {
-      console.error('API Error:', error);
-      swalHelper.showToast('Failed to fetch events', 'error');
-      throw error;
-    }
+      try {
+          this.getHeaders();
+          const response = await this.apiManager.request(
+              {
+                  url: apiEndpoints.GET_ALL_EVENTS,
+                  method: 'GET',
+              },
+              null,
+              this.headers
+          );
+          return response.data || [];
+      } catch (error) {
+          console.error('API Error:', error);
+          swalHelper.showToast('Failed to fetch events', 'error');
+          throw error;
+      }
   }
 
   async createEvent(formData: FormData): Promise<any> {
-    try {
-      this.getHeaders();
-      
-      const response = await this.apiManager.request(
-        {
-          url: apiEndpoints.CREATE_EVENT,
-          method: 'POST',
-          isFormData: true,
-        },
-        formData,
-        this.headers
-      );
-      
-      return response;
-    } catch (error) {
-      console.error('Create Event Error:', error);
-      swalHelper.showToast('Failed to create event', 'error');
-      throw error;
-    }
+      try {
+          this.getHeaders();
+          const response = await this.apiManager.request(
+              {
+                  url: apiEndpoints.CREATE_EVENT,
+                  method: 'POST',
+                  isFormData: true,
+              },
+              formData,
+              this.headers
+          );
+          return response;
+      } catch (error) {
+          console.error('Create Event Error:', error);
+          swalHelper.showToast('Failed to create event', 'error');
+          throw error;
+      }
+  }
+
+  async updateEvent(eventId: string, formData: FormData): Promise<any> {
+      try {
+          this.getHeaders();
+          const response = await this.apiManager.request(
+              {
+                 
+                    url: `${apiEndpoints.UPDATE_EVENT}/${eventId}`,
+                  method: 'PUT',
+                  isFormData: true,
+              },
+              formData,
+              this.headers
+          );
+          return response;
+      } catch (error) {
+          console.error('Update Event Error:', error);
+          swalHelper.showToast('Failed to update event', 'error');
+          throw error;
+      }
   }
 
   async addPhotosToEvent(eventId: string, formData: FormData): Promise<any> {
-    try {
-      this.getHeaders();
-      
-      const response = await this.apiManager.request(
-        {
-          url: `${apiEndpoints.ADD_PHOTOS_TO_EVENT}/${eventId}/photos`,
-          method: 'POST',
-          isFormData: true,
-        },
-        formData,
-        this.headers
-      );
-      
-      return response;
-    } catch (error) {
-      console.error('Add Photos Error:', error);
-      swalHelper.showToast('Failed to add photos to event', 'error');
-      throw error;
-    }
+      try {
+          this.getHeaders();
+          const response = await this.apiManager.request(
+              {
+                  url: `${apiEndpoints.ADD_PHOTOS_TO_EVENT}/${eventId}/photos`,
+                  method: 'POST',
+                  isFormData: true,
+              },
+              formData,
+              this.headers
+          );
+          return response;
+      } catch (error) {
+          console.error('Add Photos Error:', error);
+          swalHelper.showToast('Failed to add photos to event', 'error');
+          throw error;
+      }
   }
 
   async addVideosToEvent(eventId: string, formData: FormData): Promise<any> {
-    try {
-      this.getHeaders();
-      
-      const response = await this.apiManager.request(
-        {
-          url: `${apiEndpoints.ADD_VIDEOS_TO_EVENT}/${eventId}/videos`,
-          method: 'POST',
-          isFormData: true,
-        },
-        formData,
-        this.headers
-      );
-      
-      return response;
-    } catch (error) {
-      console.error('Add Videos Error:', error);
-      swalHelper.showToast('Failed to add videos to event', 'error');
-      throw error;
-    }
-  }}
-
-  
+      try {
+          this.getHeaders();
+          const response = await this.apiManager.request(
+              {
+                  url: `${apiEndpoints.ADD_VIDEOS_TO_EVENT}/${eventId}/videos`,
+                  method: 'POST',
+                  isFormData: true,
+              },
+              formData,
+              this.headers
+          );
+          return response;
+      } catch (error) {
+          console.error('Add Videos Error:', error);
+          swalHelper.showToast('Failed to add videos to event', 'error');
+          throw error;
+      }
+  }
+}
 
   export interface AttendanceData {
     _id: string;
@@ -718,7 +730,7 @@ export class EventService {
 
  
   export interface AttendanceResponse {
-    data: AttendanceData[];
+    docs: AttendanceData[];
   }
 
   export interface Attendance {
@@ -765,7 +777,7 @@ export class EventService {
           this.headers
         );
         
-        return response;
+        return response.data;
       } catch (error) {
         console.error('API Error:', error);
         swalHelper.showToast('Failed to fetch attendance records', 'error');

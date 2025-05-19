@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { CommonModule } from '@angular/common';
 import { DashboardService, DashboardCounts, DashboardResponse } from '../../../services/auth.service';
 import { swalHelper } from '../../../core/constants/swal-helper';
 
@@ -7,11 +7,11 @@ import { swalHelper } from '../../../core/constants/swal-helper';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  standalone: true, // This indicates it's a standalone component
-  imports: [CommonModule] // Add CommonModule to imports
+  standalone: true,
+  imports: [CommonModule]
 })
 export class DashboardComponent implements OnInit {
-  loading = true;
+  loading = false;
   counts: DashboardCounts = {
     users: 0,
     admins: 0,
@@ -24,20 +24,18 @@ export class DashboardComponent implements OnInit {
     banners: 0,
     events: 0,
   };
-  
+
   constructor(private dashboardService: DashboardService) { }
-  
+
   ngOnInit(): void {
     this.loadDashboardCounts();
   }
-  
+
   loadDashboardCounts(): void {
     this.loading = true;
-    
     this.dashboardService.getDashboardCounts()
       .then((response: DashboardResponse) => {
         console.log('Dashboard response:', response);
-        
         // Check if response is in the expected format
         if (response && response.data) {
           this.counts = response.data;
@@ -46,7 +44,6 @@ export class DashboardComponent implements OnInit {
           console.error('Invalid response format:', response);
           swalHelper.showToast('Invalid data format received', 'error');
         }
-        
         this.loading = false;
       })
       .catch(error => {

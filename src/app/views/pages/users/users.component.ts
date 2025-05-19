@@ -34,6 +34,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   referralsGiven: any[] = [];
   referralsReceived: any[] = [];
   referralLoading: boolean = false;
+  pdfLoading: boolean = false;
   
   private searchSubject = new Subject<string>();
   
@@ -115,7 +116,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   setActiveTab(tab: string): void {
     this.activeTab = tab;
     if (tab === 'referrals' && this.selectedUser) {
-      this.referralTab = 'given'; // Reset to 'given' tab
+      this.referralTab = 'given';
       this.referralsGiven = [];
       this.referralsReceived = [];
       this.referralPayload.page = 1;
@@ -141,11 +142,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
       if (this.referralTab === 'given') {
         response = await this.referralService.getReferralsGiven(this.selectedUser._id, this.referralPayload);
         console.log('Referrals Given API Response:', response);
-        this.referralsGiven = (response?.data && Array.isArray(response.data)) ? response.data : [];
+        this.referralsGiven = (response?.data && Array.isArray(response.data.docs)) ? response.data.docs : [];
       } else {
         response = await this.referralService.getReferralsReceived(this.selectedUser._id, this.referralPayload);
         console.log('Referrals Received API Response:', response);
-        this.referralsReceived = (response?.data && Array.isArray(response.data)) ? response.data : [];
+        this.referralsReceived = (response?.data && Array.isArray(response.data.docs)) ? response.data.docs : [];
       }
       console.log('Referrals Given:', this.referralsGiven);
       console.log('Referrals Received:', this.referralsReceived);
@@ -248,6 +249,221 @@ export class UsersComponent implements OnInit, AfterViewInit {
     return new Date(dateString).toLocaleDateString();
   }
 
+  generateUserPDF(): void {
+    this.pdfLoading = true;
+    swalHelper.showToast('Generating User PDF, please wait...', 'info');
+  
+    try {
+      const user = this.selectedUser;
+      const business = user.business && user.business.length > 0 ? user.business[0] : null;
+      
+      // Create PDF with black theme
+      const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const margin = 15;
+      const cardPadding = 8;
+      const blackColor = [0, 0, 0];
+      const primaryColor = [13, 110, 253]; // Bootstrap primary color
+      const labelWidth = 50; // Fixed width for labels
+      let yPos = margin;
+  
+      // Set default font
+      pdf.setFont('helvetica');
+  
+      // Helper function to add section header
+      const addSectionHeader = (text: string, y: number): number => {
+        pdf.setFontSize(14);
+        pdf.setTextColor(blackColor[0], blackColor[1], blackColor[2]);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(text, margin, y);
+        pdf.setDrawColor(blackColor[0], blackColor[1], blackColor[2]);
+        pdf.line(margin, y + 3, pageWidth - margin, y + 3);
+        return y + 10;
+      };
+  
+      // Helper function to add card with proper label-value spacing
+      const addCard = (title: string, content: string[][], y: number): number => {
+        // Calculate card height based on content
+        pdf.setFontSize(10);
+        const lineHeight = 7;
+        let contentHeight = 0;
+        
+        content.forEach(item => {
+          const lines = pdf.splitTextToSize(item[1], pageWidth - 2 * margin - 2 * cardPadding - labelWidth);
+          contentHeight += (lines.length * lineHeight);
+        });
+        
+        const cardHeight = contentHeight + 20; // Add padding for title and bottom
+  
+        // Check if we need a new page
+        if (y + cardHeight > pdf.internal.pageSize.getHeight() - margin) {
+          pdf.addPage();
+          y = margin;
+        }
+  
+        // Draw card border
+        pdf.setDrawColor(blackColor[0], blackColor[1], blackColor[2]);
+        pdf.setLineWidth(0.5);
+        pdf.rect(margin, y, pageWidth - 2 * margin, cardHeight, 'S');
+        
+        // Add card title
+        pdf.setFontSize(12);
+        pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(title, margin + cardPadding, y + cardPadding + 4);
+        
+        // Add content
+        pdf.setFontSize(10);
+        pdf.setTextColor(blackColor[0], blackColor[1], blackColor[2]);
+        pdf.setFont('helvetica', 'normal');
+        
+        let contentY = y + cardPadding + 10;
+        content.forEach(item => {
+          const [label, value] = item;
+          
+          // Add label with fixed width
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(`${label}:`, margin + cardPadding, contentY);
+          
+          // Add value with text wrapping and proper left margin
+          pdf.setFont('helvetica', 'normal');
+          const lines = pdf.splitTextToSize(value, pageWidth - 2 * margin - 2 * cardPadding - labelWidth);
+          pdf.text(lines, margin + cardPadding + labelWidth, contentY);
+          
+          contentY += (lines.length * lineHeight);
+        });
+  
+        return y + cardHeight + 10; // Return new y position with margin
+      };
+  
+      // Add header
+      pdf.setFontSize(18);
+      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('User Profile', margin, yPos);
+      
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(`Generated on: ${new Date().toLocaleString()}`, margin, yPos + 8);
+      yPos += 20;
+  
+      // User Profile Section
+      yPos = addSectionHeader('Basic Information', yPos);
+      
+      const profileContent = [
+        ['Name', user.name || 'N/A'],
+        ['Email', user.email || 'N/A'],
+        ['Mobile', user.mobile_number || 'N/A'],
+        ['Role', user.meeting_role || 'N/A'],
+        ['Chapter', user.chapter_name || 'N/A'],
+        ['Points', user.points?.toString() || 'N/A'],
+        ['Address', user.address || 'N/A'],
+        ['Introduction', user.introduction_details || 'N/A']
+      ];
+      yPos = addCard('Personal Details', profileContent, yPos);
+  
+      // Business Information Section
+      if (business) {
+        yPos = addSectionHeader('Business Information', yPos);
+        
+        const businessContent = [
+          ['Business Name', business.business_name || 'N/A'],
+          ['Business Type', business.business_type || 'N/A'],
+          ['Category', business.category || 'N/A'],
+          ['Sub-Category', business.sub_category || 'N/A'],
+          ['Product', business.product || 'N/A'],
+          ['Service', business.service || 'N/A'],
+          ['Formation', business.formation || 'N/A'],
+          ['Established', business.establishment ? new Date(business.establishment).toLocaleDateString() : 'N/A'],
+          ['Team Size', business.team_size?.toString() || 'N/A'],
+          ['Business Email', business.email || 'N/A'],
+          ['Business Phone', business.mobile_number || 'N/A'],
+          ['Website', business.website || 'N/A'],
+          ['Address', business.address || 'N/A'],
+          ['Description', business.about_business_details || 'N/A']
+        ];
+        yPos = addCard('Business Details', businessContent, yPos);
+      }
+  
+      // Bio Details Section
+      if (user.bioDetails) {
+        yPos = addSectionHeader('Personal Bio', yPos);
+        
+        const bioContent = [
+          ['Spouse', user.bioDetails.spouse || 'N/A'],
+          ['Children', user.bioDetails.children || 'N/A'],
+          ['Pets', user.bioDetails.pets || 'N/A'],
+          ['City of Residence', user.bioDetails.cityOfResidence || 'N/A'],
+          ['Years in City', user.bioDetails.yearInThatCity || 'N/A'],
+          ['Years in Business', user.bioDetails.yearsInBusiness || 'N/A'],
+          ['Hobbies', user.bioDetails.hobbies || 'N/A'],
+          ['Previous Business', user.bioDetails.previousTypesOfBusiness || 'N/A'],
+          ['Burning Desire', user.bioDetails.myBurningDesire || 'N/A'],
+          ['Key to Success', user.bioDetails.myKeyToSuccess || 'N/A'],
+          ['Something Unique', user.bioDetails.somethingNoOne || 'N/A']
+        ];
+        yPos = addCard('Bio Details', bioContent, yPos);
+      }
+  
+      // Growth Sheet Section
+      if (user.growthSheet) {
+        yPos = addSectionHeader('Professional Growth', yPos);
+        
+        const growthContent = [
+          ['Accomplishment', user.growthSheet.accomplishment || 'N/A'],
+          ['Goals', user.growthSheet.goals || 'N/A'],
+          ['Skills', user.growthSheet.skills || 'N/A'],
+          ['Interests', user.growthSheet.interests || 'N/A'],
+          ['Networks', user.growthSheet.networks || 'N/A']
+        ];
+        yPos = addCard('Growth Sheet', growthContent, yPos);
+      }
+  
+      // Top Profile Section
+      if (user.topProfile) {
+        yPos = addSectionHeader('Professional Highlights', yPos);
+        
+        const topProfileContent = [
+          ['Favorite LGN Story', user.topProfile.favouriteLgnStory || 'N/A'],
+          ['Top Problem Solved', user.topProfile.topProblemSolved || 'N/A'],
+          ['Top Product', user.topProfile.topProduct || 'N/A'],
+          ['Ideal Referral', user.topProfile.idealReferral || 'N/A'],
+          ['Ideal Referral Partner', user.topProfile.idealReferralParter || 'N/A']
+        ];
+        yPos = addCard('Top Profile', topProfileContent, yPos);
+      }
+  
+      // Weekly Presentation Section
+      if (user.weeklyPresentation) {
+        yPos = addSectionHeader('Presentations', yPos);
+        
+        const presentationContent = [
+          ['Presentation 1', user.weeklyPresentation.presentation1 || 'N/A'],
+          ['Presentation 2', user.weeklyPresentation.presentation2 || 'N/A']
+        ];
+        yPos = addCard('Weekly Presentations', presentationContent, yPos);
+      }
+  
+      // Add footer to each page
+      const pageCount = pdf.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin - 20, pdf.internal.pageSize.getHeight() - 10);
+      }
+  
+      // Save the PDF
+      pdf.save(`${user.name || 'user'}_profile.pdf`);
+      swalHelper.showToast('PDF generated successfully', 'success');
+    } catch (error) {
+      console.error('Error generating user PDF:', error);
+      swalHelper.showToast('Failed to generate user PDF', 'error');
+    } finally {
+      this.pdfLoading = false;
+      this.cdr.detectChanges();
+    }
+  }
   exportToPDF(): void {
     this.loading = true;
     swalHelper.showToast('Generating PDF, please wait...', 'info');
@@ -388,6 +604,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
           pdf.setPage(p);
           pdf.text(`Page ${p} of ${pageNo}`, pageWidth - 30, pageHeight - 10);
         }
+
+
+    
         
         pdf.save('members_list.pdf');
         swalHelper.showToast('PDF exported successfully', 'success');
@@ -424,6 +643,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
       fetchAllUsers();
     }
   }
+
+
 
   exportToExcel(): void {
     this.loading = true;

@@ -42,7 +42,7 @@ export class AttendanceComponent implements OnInit {
     try {
       const response = await this.attendanceService.getAllAttendance();
       if (response ) {
-        this.attendanceRecords = response.data;
+        this.attendanceRecords = response.docs;
         this.filteredRecords = [...this.attendanceRecords];
         this.cdr.detectChanges();
       } else {
